@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "vowcloud",
+  "version": "${version}",
+  "name": "VowCloud",
+  "description": "",
+  "authors": [
+    "kmaxi"
+  ],
+  "contact": {
+    "website": "https://voicesofwynn.com",
+    "repo": "https://github.com/esst9/VowCloud"
+  },
+  "license": "All-Rights-Reserved",
+  "icon": "assets/vowcloud/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "me.kmaxi.vowcloud.VowCloud"
+    ]
+  },
+  "mixins": [
+    "vowcloud.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
