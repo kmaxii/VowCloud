@@ -9,6 +9,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class VoiceClient {
     private Socket socket;
@@ -59,16 +61,16 @@ public class VoiceClient {
             byte[] buffer = new byte[1024]; // You can adjust the buffer size
 
             while (true) {
-                var obj = in.readObject();
+                int bytesRead = in.read(buffer);
 
-                if (!(obj instanceof byte[] audioData)) {
-                    System.out.println("is not byte");
-                    continue;
+                if (bytesRead == -1) {
+                    break; // Connection closed
                 }
+
                 // Write the received audio data to the audio line for playback
-                line.write(audioData, 0, audioData.length);
+                line.write(buffer, 0, bytesRead);
             }
-        } catch (IOException | ClassNotFoundException | LineUnavailableException e) {
+        } catch (IOException | LineUnavailableException e) {
             e.printStackTrace();
         }
     }
