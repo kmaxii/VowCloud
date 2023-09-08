@@ -2,18 +2,21 @@ package me.kmaxi.vowcloud;
 
 import de.maxhenkel.opus4j.OpusDecoder;
 
-import javax.sound.sampled.*;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 public class VoiceClient {
     private DatagramSocket socket;
 
     private InetAddress serverInetAddress;
     private int serverPort;
+
+    public AudioPlayer audioPlayer;
 
     public VoiceClient(String serverAddress, int serverPort) {
         try {
@@ -24,6 +27,8 @@ public class VoiceClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        audioPlayer = new AudioPlayer();
         // Start a separate thread for listening to incoming data
         Thread receiveThread = new Thread(this::receiveData);
         receiveThread.start();
@@ -51,11 +56,8 @@ public class VoiceClient {
 
     public void receiveData() {
         try {
-            AudioPlayer audioPlayer = new AudioPlayer();
-
             // Define a buffer for streaming audio data
-            byte[] buffer = new byte[960]; // You can adjust the buffer size
-
+            byte[] buffer = new byte[1024]; // You can adjust the buffer size
 
             // Create a new Opus decoder instance with the same parameters as the encoder
             OpusDecoder decoder = new OpusDecoder(48000, 1);
@@ -77,8 +79,17 @@ public class VoiceClient {
                     continue;
                 }
 
-                // Decode the received audio data
-                short[] decoded = decoder.decode(receivePacket.getData());
+                // Extract the total audio length from the header (first 4 bytes)
+                ByteBuffer headerBuffer = ByteBuffer.wrap(receivePacket.getData(), 0, 4);
+                int totalAudioLength = headerBuffer.getInt();
+                System.out.println("Total length: " + totalAudioLength);
+
+                // Decode the received audio data (skip the first 4 bytes for the header)
+                byte[] audioData = Arrays.copyOfRange(receivePacket.getData(), 4, receivePacket.getLength());
+                System.out.println("Audio data length: " + audioData.length);
+
+
+                short[] decoded = decoder.decode(audioData);
 
                 audioPlayer.write(decoded);
             }
@@ -91,7 +102,6 @@ public class VoiceClient {
             throw new RuntimeException(e);
         }
     }
-
 
     public void closeConnection() {
         if (socket != null) {
@@ -109,10 +119,11 @@ public class VoiceClient {
 
         // Add a delay if needed
         try {
-            Thread.sleep(100);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+        client.audioPlayer.stopPlayingSound();
 
         // Send the second request
         String request2 = "1/2guard...wait.whatisthat?!";

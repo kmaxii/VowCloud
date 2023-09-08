@@ -7,8 +7,10 @@ public class AudioPlayer {
 
     private static final AudioFormat audioFormat = new AudioFormat(48000, 16, 1, true, false);
 
-    private final SourceDataLine line;
+    private SourceDataLine line;
     private final FloatControl gainControl;
+
+
 
     public AudioPlayer() {
         // Create an audio line for streaming playback
@@ -30,6 +32,12 @@ public class AudioPlayer {
         line.write(data, 0, data.length); // 16-bit samples, so multiply by 2
     }
 
+    public void stopPlayingSound() {
+        line.stop();
+        line.flush();
+        line.start();
+        System.out.println("Stop");
+    }
     /**
      * Set the volume.
      * @param volume A percentage value between 0 and 100.
