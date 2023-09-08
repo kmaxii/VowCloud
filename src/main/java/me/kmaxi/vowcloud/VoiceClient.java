@@ -1,32 +1,29 @@
 package me.kmaxi.vowcloud;
 
-
 import de.maxhenkel.opus4j.OpusDecoder;
-import de.maxhenkel.opus4j.OpusEncoder;
-import de.maxhenkel.opus4j.UnknownPlatformException;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.net.Socket;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketTimeoutException;
 
 public class VoiceClient {
-    private Socket socket;
-    private DataOutputStream out;
-    private ObjectInputStream in;
+    private DatagramSocket socket;
     private final AudioFormat audioFormat;
+
+    private InetAddress serverInetAddress;
+    private int serverPort;
 
     public VoiceClient(String serverAddress, int serverPort) {
         try {
-            socket = new Socket(serverAddress, serverPort);
-            out = new DataOutputStream(socket.getOutputStream());
-            in = new ObjectInputStream(socket.getInputStream());
+            socket = new DatagramSocket();
+            this.serverPort = serverPort;
+            serverInetAddress = InetAddress.getByName(serverAddress);
             System.out.println("Connected to server.");
         } catch (IOException e) {
             e.printStackTrace();
@@ -38,16 +35,20 @@ public class VoiceClient {
         receiveThread.start();
     }
 
-
-
     public void sendRequest(String request) {
-
-        if (out == null)
+        if (socket == null)
             return;
 
         try {
-            out.writeUTF(request);
-            out.flush();
+            byte[] requestData = request.getBytes();
+            DatagramPacket sendPacket = new DatagramPacket(
+                    requestData,
+                    requestData.length,
+                    serverInetAddress,
+                    serverPort
+            );
+
+            socket.send(sendPacket);
             System.out.println("Request sent to server: " + request);
         } catch (IOException e) {
             e.printStackTrace();
@@ -64,33 +65,39 @@ public class VoiceClient {
             // Define a buffer for streaming audio data
             byte[] buffer = new byte[960]; // You can adjust the buffer size
 
+
             // Create a new Opus decoder instance with the same parameters as the encoder
             OpusDecoder decoder = new OpusDecoder(48000, 1);
             decoder.setFrameSize(960); // Set the frame size
 
-            while (true) {
-                int bytesRead = in.read(buffer);
+            boolean connectionLost = false;
 
-                if (bytesRead == -1) {
-                    break; // Connection closed
+
+            while (!connectionLost) {
+                DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
+
+                try {
+                    socket.receive(receivePacket);
+                } catch (SocketTimeoutException e) {
+                    //TODO Handle a timeout exception
+
+                    // Set connectionLost to true to exit the loop
+                    connectionLost = true;
+                    System.out.println("Lost connection to server");
+                    continue;
                 }
 
                 // Decode the received audio data
-                short[] decoded = decoder.decode(buffer);
-                // Decode a missing packet with FEC (Forward Error Correction)
-             //   decoded = decoder.decodeFec();
+                short[] decoded = decoder.decode(receivePacket.getData());
 
                 // Write the decoded audio data to the audio line for playback
                 line.write(encodeShortsToBytes(decoded), 0, decoded.length * 2); // 16-bit samples, so multiply by 2
-
             }
 
-            // Close the audio line and the decoder when done
-            line.drain();
-            line.close();
-            decoder.close();
-        } catch (IOException | LineUnavailableException | UnknownPlatformException e) {
+        } catch (IOException | LineUnavailableException e) {
             e.printStackTrace();
+        } catch (de.maxhenkel.opus4j.UnknownPlatformException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -105,19 +112,14 @@ public class VoiceClient {
     }
 
     public void closeConnection() {
-        try {
-            if (socket != null) {
-                socket.close();
-                System.out.println("Connection closed.");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (socket != null) {
+            socket.close();
+            System.out.println("Connection closed.");
         }
     }
 
     public static void main(String[] args) {
         VoiceClient client = new VoiceClient("localhost", 12346);
-
 
         // Send the first request
         String request1 = "1/1aledarohyoufell!trydoingitagain.";
@@ -146,6 +148,4 @@ public class VoiceClient {
         // Close the connection when done
         client.closeConnection();
     }
-
 }
-
