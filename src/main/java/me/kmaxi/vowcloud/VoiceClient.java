@@ -2,10 +2,7 @@ package me.kmaxi.vowcloud;
 
 import de.maxhenkel.opus4j.OpusDecoder;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.*;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -14,7 +11,6 @@ import java.net.SocketTimeoutException;
 
 public class VoiceClient {
     private DatagramSocket socket;
-    private final AudioFormat audioFormat;
 
     private InetAddress serverInetAddress;
     private int serverPort;
@@ -28,8 +24,6 @@ public class VoiceClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        audioFormat = new AudioFormat(48000, 16, 1, true, false);
-
         // Start a separate thread for listening to incoming data
         Thread receiveThread = new Thread(this::receiveData);
         receiveThread.start();
@@ -57,10 +51,7 @@ public class VoiceClient {
 
     public void receiveData() {
         try {
-            // Create an audio line for streaming playback
-            SourceDataLine line = AudioSystem.getSourceDataLine(audioFormat);
-            line.open(audioFormat);
-            line.start();
+            AudioPlayer audioPlayer = new AudioPlayer();
 
             // Define a buffer for streaming audio data
             byte[] buffer = new byte[960]; // You can adjust the buffer size
@@ -71,7 +62,6 @@ public class VoiceClient {
             decoder.setFrameSize(960); // Set the frame size
 
             boolean connectionLost = false;
-
 
             while (!connectionLost) {
                 DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
@@ -90,26 +80,18 @@ public class VoiceClient {
                 // Decode the received audio data
                 short[] decoded = decoder.decode(receivePacket.getData());
 
-                // Write the decoded audio data to the audio line for playback
-                line.write(encodeShortsToBytes(decoded), 0, decoded.length * 2); // 16-bit samples, so multiply by 2
+                audioPlayer.write(decoded);
             }
 
-        } catch (IOException | LineUnavailableException e) {
+            decoder.close();
+
+        } catch (IOException e) {
             e.printStackTrace();
         } catch (de.maxhenkel.opus4j.UnknownPlatformException e) {
             throw new RuntimeException(e);
         }
     }
 
-    // Helper function to convert short[] to byte[]
-    private byte[] encodeShortsToBytes(short[] shorts) {
-        byte[] bytes = new byte[shorts.length * 2]; // 16-bit samples, so multiply by 2
-        for (int i = 0; i < shorts.length; i++) {
-            bytes[i * 2] = (byte) (shorts[i] & 0xFF);
-            bytes[i * 2 + 1] = (byte) (shorts[i] >> 8);
-        }
-        return bytes;
-    }
 
     public void closeConnection() {
         if (socket != null) {
@@ -137,13 +119,11 @@ public class VoiceClient {
         client.sendRequest(request2);
 
         try {
-            Thread.sleep(5000);
+            Thread.sleep(7000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
 
-        // Continue with other tasks or user interaction
-        // ...
 
         // Close the connection when done
         client.closeConnection();
