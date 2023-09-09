@@ -1,16 +1,22 @@
 package me.kmaxi.vowcloud;
 
+import de.maxhenkel.opus4j.OpusDecoder;
+import de.maxhenkel.opus4j.UnknownPlatformException;
+
 import javax.sound.sampled.*;
+import java.io.IOException;
 
 public class AudioPlayer {
 
 
     private static final AudioFormat audioFormat = new AudioFormat(48000, 16, 1, true, false);
 
-    private SourceDataLine line;
+    private final SourceDataLine line;
     private final FloatControl gainControl;
+    private final OpusDecoder decoder;
 
-
+    private int lastPlayedSoundLength;
+    private int stopPlayingSoundWithLength;
 
     public AudioPlayer() {
         // Create an audio line for streaming playback
@@ -23,19 +29,49 @@ public class AudioPlayer {
         line.start();
         gainControl = (FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN);
 
+        // Create a new Opus decoder instance with the same parameters as the encoder
+        try {
+            decoder = new OpusDecoder(48000, 1);
+        } catch (IOException | UnknownPlatformException e) {
+            throw new RuntimeException(e);
+        }
+        decoder.setFrameSize(960);
+
     }
 
-    public void write(short[] data) {
+    private void write(short[] data) {
         write(encodeShortsToBytes(data));
     }
-    public void write(byte[] data) {
+    private void write(byte[] data) {
         line.write(data, 0, data.length); // 16-bit samples, so multiply by 2
     }
 
-    public void stopPlayingSound() {
+    public void play(AudioPacket audioPacket){
+
+
+        int toPlayLength = audioPacket.getTotalAudioLength();
+
+        if (toPlayLength == stopPlayingSoundWithLength) {
+            return;
+        }
+        lastPlayedSoundLength = toPlayLength;
+
+   /*     if (toPlayLength !=  lastPlayedSoundLength) {
+            stopPlayingCurrentSound();
+            lastPlayedSoundLength = toPlayLength;
+        }*/
+
+        System.out.println("write " + toPlayLength);
+
+        short[] decoded = decoder.decode(audioPacket.getAudioData());
+        write(decoded);
+    }
+
+    public void stopPlayingCurrentSound() {
         line.stop();
         line.flush();
         line.start();
+        stopPlayingSoundWithLength = lastPlayedSoundLength;
         System.out.println("Stop");
     }
     /**
@@ -48,6 +84,7 @@ public class AudioPlayer {
 
     public void close() {
         line.close();
+        decoder.close();
     }
     private static final float maxGain = 6.0205994f;
     private static final float minGain = -80.0f;
