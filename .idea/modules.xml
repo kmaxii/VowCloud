@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/VowCloud.main.iml" filepath="$PROJECT_DIR$/.idea/modules/VowCloud.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/VowCloud.test.iml" filepath="$PROJECT_DIR$/.idea/modules/VowCloud.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/me.kmaxi.VowCloud.main.iml" filepath="$PROJECT_DIR$/.idea/modules/me.kmaxi.VowCloud.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/me.kmaxi.VowCloud.test.iml" filepath="$PROJECT_DIR$/.idea/modules/me.kmaxi.VowCloud.test.iml" />
     </modules>
   </component>
 </project>
