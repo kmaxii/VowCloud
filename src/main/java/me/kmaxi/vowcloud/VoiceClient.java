@@ -46,8 +46,6 @@ public class VoiceClient {
             );
 
             socket.send(sendPacket);
-            audioPlayer.stopPlayingCurrentSound();
-            System.out.println("Request sent to server: " + request);
         } catch (IOException e) {
             e.printStackTrace();
         }

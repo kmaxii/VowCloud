@@ -2,9 +2,12 @@ package me.kmaxi.vowcloud;
 
 import de.maxhenkel.opus4j.OpusDecoder;
 import de.maxhenkel.opus4j.UnknownPlatformException;
+import me.kmaxi.vowcloud.utils.Utils;
 
 import javax.sound.sampled.*;
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class AudioPlayer {
 
@@ -17,6 +20,8 @@ public class AudioPlayer {
 
     private int lastPlayedSoundLength;
     private int stopPlayingSoundWithLength;
+
+    private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public AudioPlayer() {
         // Create an audio line for streaming playback
@@ -42,29 +47,41 @@ public class AudioPlayer {
     private void write(short[] data) {
         write(encodeShortsToBytes(data));
     }
+
     private void write(byte[] data) {
         line.write(data, 0, data.length); // 16-bit samples, so multiply by 2
     }
 
-    public void play(AudioPacket audioPacket){
-
+    public void play(AudioPacket audioPacket) {
 
         int toPlayLength = audioPacket.getTotalAudioLength();
 
         if (toPlayLength == stopPlayingSoundWithLength) {
             return;
         }
+
+        if (toPlayLength != lastPlayedSoundLength) {
+            stopPlayingCurrentSound();
+
+        }
+
         lastPlayedSoundLength = toPlayLength;
 
-   /*     if (toPlayLength !=  lastPlayedSoundLength) {
-            stopPlayingCurrentSound();
-            lastPlayedSoundLength = toPlayLength;
-        }*/
+        //We run the playing on a different thread as the playing of sound slows down the thread it is running on
+        executorService.execute(() ->{
 
-        System.out.println("write " + toPlayLength);
+            //As it gets slowed down, we need to check this again because once this code is queued to run
+            //This audio might have already been cancelled
+            if (toPlayLength == stopPlayingSoundWithLength) {
+                return;
+            }
+            short[] decoded = decoder.decode(audioPacket.getAudioData());
 
-        short[] decoded = decoder.decode(audioPacket.getAudioData());
-        write(decoded);
+            write(decoded);
+        });
+
+
+
     }
 
     public void stopPlayingCurrentSound() {
@@ -74,8 +91,10 @@ public class AudioPlayer {
         stopPlayingSoundWithLength = lastPlayedSoundLength;
         System.out.println("Stop");
     }
+
     /**
      * Set the volume.
+     *
      * @param volume A percentage value between 0 and 100.
      */
     public void setVolume(int volume) {
@@ -86,8 +105,10 @@ public class AudioPlayer {
         line.close();
         decoder.close();
     }
+
     private static final float maxGain = 6.0205994f;
     private static final float minGain = -80.0f;
+
     private static float mapPercentageToGain(int percentage) {
         // Ensure percentage is within the valid range [0, 100]
         percentage = Math.min(100, Math.max(0, percentage));
@@ -105,9 +126,6 @@ public class AudioPlayer {
         }
         return bytes;
     }
-
-
-
 
 
 }
