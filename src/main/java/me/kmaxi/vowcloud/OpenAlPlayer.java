@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -99,8 +100,17 @@ public class OpenAlPlayer {
         }
     }
 
+    public void stopAudio(){
+        executorService.execute(this::stopPlayingSync);
+    }
+
+    private void stopPlayingSync(){
+        AL11.alSourceStop(sourceID);
+    }
+
     private void writeSync(short[] data, float volume) {
-        setPositionSync(new Vec3(-1570, 51, -1632));
+        //setPositionSync(Optional.of(new Vec3(-1570, 51, -1632)));
+        setPositionSync(Optional.empty());
 
         AL11.alSourcef(sourceID, AL11.AL_MAX_GAIN, 6F);
         AL11.alSourcef(sourceID, AL11.AL_GAIN, volume);
@@ -120,15 +130,30 @@ public class OpenAlPlayer {
         bufferIndex = (bufferIndex + 1) % buffers.length;
     }
 
-    public void setPosition(Vec3 soundPos) {
+    public void setPosition(Optional<Vec3> soundPos) {
         executorService.execute(() -> {
             setPositionSync(soundPos);
         });
     }
 
 
-    private void setPositionSync(Vec3 soundPos) {
-        AL11.alSource3f(sourceID, AL11.AL_POSITION, (float) soundPos.x, (float) soundPos.y, (float) soundPos.z);
+    private void setPositionSync(Optional<Vec3> soundPos) {
+
+
+        soundPos.ifPresentOrElse((pos) -> {
+            AL11.alSourcei(sourceID, AL11.AL_SOURCE_RELATIVE, AL11.AL_FALSE);
+
+            AL11.alSource3f(sourceID, AL11.AL_POSITION, (float) pos.x, (float) pos.y, (float) pos.z);
+        },  () -> {
+
+            AL11.alSourcei(sourceID, AL11.AL_SOURCE_RELATIVE, AL11.AL_TRUE);
+
+            AL11.alSource3f(sourceID, AL11.AL_POSITION, (float) 0, (float) 0, (float) 0);
+        });
+
+
+
+
     }
 
 
