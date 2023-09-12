@@ -25,6 +25,7 @@ public class VowCloud implements ModInitializer {
         ClientTickEvents.END_WORLD_TICK.register(cli -> {
             // Your ticking method
             chatHandler3.onTick();
+            voiceClient.audioPlayer.openAlPlayer.onTick();
         });
     }
 

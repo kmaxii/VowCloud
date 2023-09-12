@@ -2,6 +2,7 @@ package me.kmaxi.vowcloud;
 
 import de.maxhenkel.opus4j.OpusDecoder;
 import de.maxhenkel.opus4j.UnknownPlatformException;
+import me.kmaxi.vowcloud.utils.LineFormatter;
 
 import javax.sound.sampled.*;
 import java.io.IOException;
@@ -21,7 +22,14 @@ public class AudioPlayer {
     private int stopPlayingSoundWithLength;
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-    private final OpenAlPlayer openAlPlayer;
+    public final OpenAlPlayer openAlPlayer;
+
+    private LineData lastSentLineData;
+
+    public void onNpcDialogue(LineData lineData) {
+        lastSentLineData = lineData;
+    }
+
 
     public AudioPlayer() {
         openAlPlayer = new OpenAlPlayer();
@@ -65,8 +73,7 @@ public class AudioPlayer {
         }
 
         if (toPlayLength != lastPlayedSoundLength) {
-            stopPlayingCurrentSound();
-
+            handleNewAudioStarted();
         }
 
         lastPlayedSoundLength = toPlayLength;
@@ -83,9 +90,13 @@ public class AudioPlayer {
 
             write(decoded);
         });
+    }
+
+    private void handleNewAudioStarted() {
 
 
-
+        stopPlayingCurrentSound();
+        openAlPlayer.updateSpeaker(lastSentLineData.getNPCName());
     }
 
     public void stopPlayingCurrentSound() {

@@ -1,7 +1,6 @@
 package me.kmaxi.vowcloud.events;
 
 import me.kmaxi.vowcloud.LineData;
-import me.kmaxi.vowcloud.VoiceClient;
 import me.kmaxi.vowcloud.VowCloud;
 import me.kmaxi.vowcloud.utils.LineFormatter;
 import net.minecraft.client.Minecraft;
@@ -20,17 +19,17 @@ public class ReceiveChatEvent {
 
     private static final HashSet<String> onCooldown = new HashSet<>();
 
-    public static void resetCooldowns(){
+    public static void resetCooldowns() {
         onCooldown.clear();
     }
-    
+
     public static void receivedChat(String msg) {
         if (stopMod) return;
 
         msg = replaceNameWithSoldier(msg);
 
         LineData lineData = LineFormatter.formatToLineData(msg);
-        
+
 
         if (onCooldown.contains(lineData.getSoundLine())) {
             return;
@@ -44,12 +43,12 @@ public class ReceiveChatEvent {
             }
         }
 
-        System.out.println("Trying to play sound: " + lineData.getRealLine());
+        VowCloud.voiceClient.audioPlayer.onNpcDialogue(lineData);
         if (VowCloud.voiceClient != null)
             VowCloud.voiceClient.sendRequest(lineData.getSoundLine());
     }
 
-    private static String replaceNameWithSoldier(String msg){
+    private static String replaceNameWithSoldier(String msg) {
         //Replace player Name with "soldier"
         String name = GetPlayerName(msg);
         if (msg.contains(name)) {
