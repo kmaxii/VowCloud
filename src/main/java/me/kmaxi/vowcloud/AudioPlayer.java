@@ -89,11 +89,12 @@ public class AudioPlayer {
     }
 
     public void stopPlayingCurrentSound() {
-        line.stop();
+        openAlPlayer.stopAudio();
+    /*    line.stop();
         line.flush();
         line.start();
         stopPlayingSoundWithLength = lastPlayedSoundLength;
-        System.out.println("Stop");
+        System.out.println("Stop");*/
     }
 
     /**
