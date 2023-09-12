@@ -18,8 +18,9 @@ public class VowCloud implements ModInitializer {
     public void onInitialize() {
         chatHandler3 = new ChatHandler3();
         instance = this;
-        VoiceClient client = new VoiceClient("localhost", 12345);
-        //client.connectToServer("localhost", 12345);
+
+        VowCloud.voiceClient = new VoiceClient("localhost", 12345);
+
 
         ClientTickEvents.END_WORLD_TICK.register(cli -> {
             // Your ticking method

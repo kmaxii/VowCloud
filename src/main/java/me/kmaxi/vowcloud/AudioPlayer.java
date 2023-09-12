@@ -2,7 +2,6 @@ package me.kmaxi.vowcloud;
 
 import de.maxhenkel.opus4j.OpusDecoder;
 import de.maxhenkel.opus4j.UnknownPlatformException;
-import me.kmaxi.vowcloud.utils.Utils;
 
 import javax.sound.sampled.*;
 import java.io.IOException;
@@ -21,9 +20,12 @@ public class AudioPlayer {
     private int lastPlayedSoundLength;
     private int stopPlayingSoundWithLength;
 
-    private ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private final OpenAlPlayer openAlPlayer;
 
     public AudioPlayer() {
+        openAlPlayer = new OpenAlPlayer();
+
         // Create an audio line for streaming playback
         try {
             line = AudioSystem.getSourceDataLine(audioFormat);
@@ -45,7 +47,9 @@ public class AudioPlayer {
     }
 
     private void write(short[] data) {
-        write(encodeShortsToBytes(data));
+        openAlPlayer.playAudio(data);
+
+    //    write(encodeShortsToBytes(data));
     }
 
     private void write(byte[] data) {

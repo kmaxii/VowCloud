@@ -116,6 +116,5 @@ public class VoiceClient {
 
 
         // Close the connection when done
-        client.closeConnection();
     }
 }
