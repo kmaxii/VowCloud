@@ -73,7 +73,7 @@ public class AudioPlayer {
         }
 
         if (toPlayLength != lastPlayedSoundLength) {
-            handleNewAudioStarted();
+            handleNewAudioStarted(audioPacket);
         }
 
         lastPlayedSoundLength = toPlayLength;
@@ -92,11 +92,10 @@ public class AudioPlayer {
         });
     }
 
-    private void handleNewAudioStarted() {
-
+    private void handleNewAudioStarted(AudioPacket audioPacket) {
 
         stopPlayingCurrentSound();
-        openAlPlayer.updateSpeaker(lastSentLineData.getNPCName());
+        openAlPlayer.updateSpeaker(audioPacket.isMovingSound() ? "" : lastSentLineData.getNPCName());
     }
 
     public void stopPlayingCurrentSound() {
