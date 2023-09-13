@@ -1,5 +1,6 @@
 package me.kmaxi.vowcloud.events;
 
+import me.kmaxi.vowcloud.AudioPlayer;
 import me.kmaxi.vowcloud.VoiceClient;
 import me.kmaxi.vowcloud.VowCloud;
 import me.kmaxi.vowcloud.utils.Utils;
@@ -33,8 +34,13 @@ public class JoinServerEvent {
     public static class SchedulerTask extends TimerTask {
         @Override
         public void run() {
+            if (VowCloud.voiceClient != null){
+                VowCloud.voiceClient.closeConnection();
+            }
+
+            VowCloud.voiceClient = new VoiceClient("129.151.214.102", 25565);
+            VowCloud.getInstance().audioPlayer = new AudioPlayer();
             System.out.println("Connecting to server");
-            VowCloud.voiceClient = new VoiceClient("localhost", 12345);
             Utils.sendMessage("Connecting to server");
         }
     }

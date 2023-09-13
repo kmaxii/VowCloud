@@ -43,7 +43,7 @@ public class ReceiveChatEvent {
             }
         }
 
-        VowCloud.voiceClient.audioPlayer.onNpcDialogue(lineData);
+        VowCloud.getInstance().audioPlayer.onNpcDialogue(lineData);
         if (VowCloud.voiceClient != null)
             VowCloud.voiceClient.sendRequest(lineData.getSoundLine());
     }

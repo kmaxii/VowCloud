@@ -18,6 +18,10 @@ repositories {
         name = "henkelmax.public"
         url = 'https://maven.maxhenkel.de/repository/public'
     }
+    maven {
+        name = "CottonMC"
+        url = "https://server.bbkr.space/artifactory/libs-release"
+    }
 }
 
 dependencies {
@@ -33,6 +37,7 @@ dependencies {
     shadow "de.maxhenkel.opus4j:opus4j:2.0.2"
     modImplementation include("de.maxhenkel.opus4j:opus4j:2.0.2")
     implementation 'de.maxhenkel.lame4j:lame4j:2.0.3'
+    modImplementation include("io.github.cottonmc:LibGui:7.0.0-rc.1+1.19.4")
 
 }
 

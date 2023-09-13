@@ -14,7 +14,8 @@ public class VoiceClient {
     private InetAddress serverInetAddress;
     private int serverPort;
 
-    public AudioPlayer audioPlayer;
+
+
 
     public VoiceClient(String serverAddress, int serverPort) {
         try {
@@ -26,10 +27,10 @@ public class VoiceClient {
             e.printStackTrace();
         }
 
-        audioPlayer = new AudioPlayer();
         // Start a separate thread for listening to incoming data
         Thread receiveThread = new Thread(this::receiveData);
         receiveThread.start();
+        sendRequest("AUTH:" + VowCloud.getInstance().config.getAccessCode());
     }
 
     public void sendRequest(String request) {
@@ -74,7 +75,7 @@ public class VoiceClient {
                 }
 
                 AudioPacket audioPacket = new AudioPacket(receivePacket);
-                audioPlayer.play(audioPacket);
+                VowCloud.getInstance().audioPlayer.play(audioPacket);
             }
 
 
@@ -91,7 +92,8 @@ public class VoiceClient {
     }
 
     public static void main(String[] args) {
-        VoiceClient client = new VoiceClient("localhost", 12345);
+     //   VoiceClient client = new VoiceClient("129.151.214.102", 25565);
+        VoiceClient client = new VoiceClient("localhost", 25565);
 
         // Send the first request
         String request1 = "1/1aledarohyoufell!trydoingitagain.";
