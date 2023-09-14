@@ -4,14 +4,10 @@ import me.kmaxi.vowcloud.npc.CurrentSpeaker;
 import net.minecraft.world.phys.Vec3;
 import org.lwjgl.openal.*;
 
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static org.lwjgl.openal.ALC10.alcCreateContext;
-import static org.lwjgl.openal.ALC10.alcMakeContextCurrent;
 
 public class OpenAlPlayer {
     private long device;
@@ -43,22 +39,12 @@ public class OpenAlPlayer {
     private void createOpelAL() {
 
         executorService.execute(() -> {
-            // Initialize OpenAL
-            device = ALC11.alcOpenDevice((ByteBuffer) null);
-            ALCCapabilities deviceCaps = ALC.createCapabilities(device);
-            context = alcCreateContext(device, (IntBuffer) null);
-
-            alcMakeContextCurrent(context);
-
-            AL.createCapabilities(deviceCaps);
-
             // Create an OpenAL source
             sourceID = AL10.alGenSources();
 
 
             // Create an OpenAL buffer
             AL10.alGenBuffers(buffers);
-       //     AL11.alSourcei(sourceID, AL11.AL_LOOPING, AL11.AL_FALSE);
             AL11.alDistanceModel(AL11.AL_LINEAR_DISTANCE);
             AL11.alSourcef(sourceID, AL11.AL_MAX_DISTANCE, maxDistance);
             AL11.alSourcef(sourceID, AL11.AL_REFERENCE_DISTANCE, 0F);
