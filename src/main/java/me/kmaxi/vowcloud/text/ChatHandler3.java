@@ -1,6 +1,7 @@
 /*
- * Copyright © Wynntils 2022-2023.
- * This file is released under LGPLv3. See LICENSE for full license details.
+ * This file originates from © Wynntils 2023 https://github.com/Wynntils/Artemis/
+ * but was modified to fit this project
+ * This file is released under AGPLv3. See LICENSE for full license details.
  */
 package me.kmaxi.vowcloud.text;
 
@@ -47,6 +48,7 @@ public final class ChatHandler3 {
             // If we got here, then we did not get the slowdown effect, otherwise we would
             // have sent the dialogue already
             postNpcDialogue(dialogToSend, delayedType);
+
         }
     }
 
@@ -167,6 +169,7 @@ public final class ChatHandler3 {
             // No new lines has appeared since last registered chat line.
             // We could just have a dialog that disappeared, so we must signal this
             postNpcDialogue(List.of(), NpcDialogueType.NONE);
+
             return;
         }
 
@@ -278,8 +281,6 @@ public final class ChatHandler3 {
 
         // But it can weirdly enough actually also be a foreground NPC chat message...
         if (getRecipientType(styledText) == RecipientType.NPC) {
-            // In this case, do *not* save this as last chat, since it will soon disappear
-            // from history!
             postNpcDialogue(List.of(message), NpcDialogueType.CONFIRMATIONLESS);
         }
 
@@ -302,8 +303,6 @@ public final class ChatHandler3 {
 
         if (recipientType == RecipientType.NPC) {
             postNpcDialogue(List.of(message), NpcDialogueType.CONFIRMATIONLESS);
-            // We need to cancel the original chat event, if any
-
         }
     }
 
@@ -344,7 +343,6 @@ public final class ChatHandler3 {
 
     private void onNpcDialogue(List<Component> dialogue){
         for (var comp : dialogue){
-            Utils.sendMessage(comp.getString());
             ReceiveChatEvent.receivedChat(comp.getString());
         }
     }

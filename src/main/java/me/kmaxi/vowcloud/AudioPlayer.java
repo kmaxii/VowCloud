@@ -2,6 +2,7 @@ package me.kmaxi.vowcloud;
 
 import de.maxhenkel.opus4j.OpusDecoder;
 import de.maxhenkel.opus4j.UnknownPlatformException;
+import me.kmaxi.vowcloud.utils.Utils;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
@@ -17,9 +18,11 @@ public class AudioPlayer {
     public final OpenAlPlayer openAlPlayer;
 
     private LineData lastSentLineData;
+    private long timeWhenSentRequest;
 
     public void onNpcDialogue(LineData lineData) {
         lastSentLineData = lineData;
+        timeWhenSentRequest = System.currentTimeMillis();
     }
 
 
@@ -65,6 +68,8 @@ public class AudioPlayer {
 
         stopPlayingCurrentSound();
         openAlPlayer.updateSpeaker(audioPacket.isMovingSound() ? "" : lastSentLineData.getNPCName());
+        Utils.sendMessage("Delay was: " + (System.currentTimeMillis() - timeWhenSentRequest) / 1000f + " seconds");
+
     }
 
     public void stopPlayingCurrentSound() {

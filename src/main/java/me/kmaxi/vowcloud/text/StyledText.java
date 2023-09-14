@@ -1,6 +1,7 @@
 /*
- * Copyright © Wynntils 2023.
- * This file is released under LGPLv3. See LICENSE for full license details.
+ * This file originates from © Wynntils 2023 https://github.com/Wynntils/Artemis/
+ * but was modified to fit this project
+ * This file is released under AGPLv3. See LICENSE for full license details.
  */
 package me.kmaxi.vowcloud.text;
 

@@ -12,7 +12,7 @@ public class ShowGUIEvent {
 
     public static void onGUIOpen(Screen screen, CallbackInfo ci) {
 
-        if (screen instanceof TitleScreen  && VowCloud.getInstance().config.getAccessCode().isEmpty()) {
+        if (screen instanceof TitleScreen  && VowCloud.getInstance().config.getAccessCode().isEmpty() && !AcesCodeGUI.stopShowing) {
             AcesCodeGUI.OpenGui();
             ci.cancel();
         }
