@@ -26,8 +26,6 @@ public class VowCloud implements ModInitializer {
         chatHandler3 = new ChatHandler3();
         instance = this;
 
-        audioPlayer = new AudioPlayer();
-
         config = new VowConfig("config/vowcloud.json");
 
       //  VowCloud.voiceClient = new VoiceClient("129.151.214.102", 25565);
@@ -36,7 +34,8 @@ public class VowCloud implements ModInitializer {
         ClientTickEvents.END_WORLD_TICK.register(cli -> {
             // Your ticking method
             chatHandler3.onTick();
-            audioPlayer.openAlPlayer.onTick();
+            if (audioPlayer != null)
+                audioPlayer.openAlPlayer.onTick();
         });
     }
 

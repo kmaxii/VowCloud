@@ -14,6 +14,7 @@ public class Utils {
         //&& Minecraft.getInstance().inGameHud != null && Minecraft.getInstance().inGameHud.getChatHud() != null
         if (Minecraft.getInstance().player != null)
             Minecraft.getInstance().gui.getChat().addMessage(Component.literal("§5[Voices of Wynn]§r " + text));
+        System.out.println(text);
     }
 
     public static void appendMessageWithLinkAndSend(String text, String url, String clickText) {
