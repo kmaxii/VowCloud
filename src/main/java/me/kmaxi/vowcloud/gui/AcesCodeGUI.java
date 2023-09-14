@@ -4,11 +4,14 @@ package me.kmaxi.vowcloud.gui;
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.*;
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
+import io.github.cottonmc.cotton.gui.widget.icon.ItemIcon;
 import me.kmaxi.vowcloud.VowCloud;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public class AcesCodeGUI extends LightweightGuiDescription {
 
@@ -16,12 +19,16 @@ public class AcesCodeGUI extends LightweightGuiDescription {
 
     private WTextField wTextField;
 
+    private static String errorText = "";
+
+    public static boolean stopShowing = false;
+
     public AcesCodeGUI() {
         WGridPanel root = new WGridPanel();
         setRootPanel(root);
         root.setSize(300, 200);
 
-        AddLogo(root);
+    //    AddLogo(root);
         AddStartText(root);
 
         AddTextField(root);
@@ -37,6 +44,7 @@ public class AcesCodeGUI extends LightweightGuiDescription {
     private void AddStartText(WGridPanel root) {
         root.add(new WLabel(Component.literal("VOICES OF WYNN")).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 1);
         root.add(new WLabel(Component.literal("Please enter your unique access code:")).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 2);
+        root.add(new WLabel(Component.literal("§c" + errorText)).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 3);
 
     /*    root.add(new WLabel(Component.literal("encountered while playing Wynncraft to improve")).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 3);
         root.add(new WLabel(Component.literal("Voices of Wynn?")).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 4);
@@ -47,7 +55,7 @@ public class AcesCodeGUI extends LightweightGuiDescription {
 
     private void AddTextField(WGridPanel root) {
         wTextField = new WTextField();
-        root.add(wTextField, 1, 3, 15, 20);
+        root.add(wTextField, 1, 4, 15, 20);
     }
 
 
@@ -58,6 +66,13 @@ public class AcesCodeGUI extends LightweightGuiDescription {
         // noneButton.setIcon(new ItemIcon(new ItemStack(Items.DIAMOND)));
         root.add(noneButton, 6, 9, 4, 20);
 
+
+        WButton closeButton = new WButton(Component.literal("§cClose"));
+        closeButton.setOnClick(this::onCloseClick);
+        closeButton.setAlignment(HorizontalAlignment.CENTER);
+        closeButton.setIcon(new ItemIcon(new ItemStack(Items.BARRIER)));
+        root.add(closeButton, 12, 9, 4, 20);
+
     }
 
     public static void OpenGui() {
@@ -66,10 +81,26 @@ public class AcesCodeGUI extends LightweightGuiDescription {
 
 
 
+    private void onCloseClick() {
+        stopShowing = true;
+        SetTitleScreen();
+    }
+
+
     private void onConfirmClick() {
         System.out.println(wTextField.getText());
-        VowCloud.getInstance().config.setAccessCode(wTextField.getText());
+
+        String accessCode = wTextField.getText();
+        ServerRespons serverRespons = AuthApiClient.checkAuthentication(accessCode);
+        switch (serverRespons) {
+            case CORRECT -> VowCloud.getInstance().config.setAccessCode(wTextField.getText());
+            case WRONG -> errorText = "Invalid Access Code";
+            case SERVER_DOWN -> errorText = "ERROR! VOW server is down";
+            default -> errorText = "UNKNOWN ERROR! Please open a ticket in our discord";
+        }
         SetTitleScreen();
+
+
     }
 
     private void SetTitleScreen() {
