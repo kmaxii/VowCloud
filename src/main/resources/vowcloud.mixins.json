@@ -7,9 +7,9 @@
   ],
   "client": [
     "MixinPacketListener",
+    "MixinShowGuiListener",
     "SneakPacketMixin",
-    "MixinServerConnectListener",
-    "MixinShowGuiListener"
+    "SoundEngineStartedMixin"
   ],
   "injectors": {
     "defaultRequire": 1

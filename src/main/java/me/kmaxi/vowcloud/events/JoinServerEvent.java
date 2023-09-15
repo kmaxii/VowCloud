@@ -4,18 +4,13 @@ import me.kmaxi.vowcloud.AudioPlayer;
 import me.kmaxi.vowcloud.VoiceClient;
 import me.kmaxi.vowcloud.VowCloud;
 import me.kmaxi.vowcloud.gui.AuthApiClient;
-import me.kmaxi.vowcloud.gui.ServerRespons;
 import me.kmaxi.vowcloud.utils.Utils;
 
-import java.text.DecimalFormat;
 import java.util.Timer;
 import java.util.TimerTask;
 
 
 public class JoinServerEvent {
-
-
-    private static final DecimalFormat df = new DecimalFormat("0.00");
 
 
     public static void run(String ip) {
@@ -36,15 +31,16 @@ public class JoinServerEvent {
     public static class SchedulerTask extends TimerTask {
         @Override
         public void run() {
-            if (VowCloud.voiceClient != null){
+            if (VowCloud.voiceClient != null) {
                 VowCloud.voiceClient.closeConnection();
             }
 
-            switch (AuthApiClient.checkAuthentication(VowCloud.getInstance().config.getAccessCode())){
+            switch (AuthApiClient.checkAuthentication(VowCloud.getInstance().config.getAccessCode())) {
                 case CORRECT -> {
                     Utils.sendMessage("Connecting to server");
                     VowCloud.getInstance().audioPlayer = new AudioPlayer();
-                    VowCloud.voiceClient = new VoiceClient("129.151.214.102", 25565);
+                    // VowCloud.voiceClient = new VoiceClient("129.151.214.102", 25565);
+                    VowCloud.voiceClient = new VoiceClient("localhost", 25565);
                 }
                 case WRONG -> {
                     Utils.sendMessage("Invalid access code");
@@ -56,8 +52,6 @@ public class JoinServerEvent {
                     Utils.sendMessage("Unknown error. Please contact staff");
                 }
             }
-
-
 
 
         }
