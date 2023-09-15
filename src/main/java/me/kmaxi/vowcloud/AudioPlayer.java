@@ -67,8 +67,8 @@ public class AudioPlayer {
     private void handleNewAudioStarted(AudioPacket audioPacket) {
 
         stopPlayingCurrentSound();
-        openAlPlayer.updateSpeaker(audioPacket.isMovingSound() ? "" : lastSentLineData.getNPCName());
-        Utils.sendMessage("Delay was: " + (System.currentTimeMillis() - timeWhenSentRequest) / 1000f + " seconds");
+        openAlPlayer.updateSpeaker(audioPacket.isMovingSound() ? "" : lastSentLineData.getNPCName(), audioPacket.getPosition());
+      //  Utils.sendMessage("Delay was: " + (System.currentTimeMillis() - timeWhenSentRequest) / 1000f + " seconds");
 
     }
 

@@ -26,6 +26,8 @@ public class OpenAlPlayer {
 
     private final CurrentSpeaker currentSpeaker;
 
+    private Vec3 customPlayPos;
+
 
     public OpenAlPlayer() {
 
@@ -75,13 +77,23 @@ public class OpenAlPlayer {
                 return;
             }
 
+            if(customPlayPos != null){
+                setPosition(Optional.of(customPlayPos));
+                return;
+            }
+
             Optional<Vec3> position = currentSpeaker.getUpdatedPosition();
             setPosition(position);
         });
     }
 
-    public void updateSpeaker(String speakerName){
+    public void updateSpeaker(String speakerName, Vec3 pos){
         executorService.execute(() -> {
+            if (pos.x == 0 && pos.y == 0 && pos.z == 0) {
+                customPlayPos = null;
+            } else{
+                customPlayPos = pos;
+            }
             currentSpeaker.setNpc(speakerName);
         });
     }
