@@ -5,6 +5,8 @@ import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.*;
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.github.cottonmc.cotton.gui.widget.icon.ItemIcon;
+import me.kmaxi.vowcloud.AuthInfo;
+import me.kmaxi.vowcloud.VoiceClient;
 import me.kmaxi.vowcloud.VowCloud;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.TitleScreen;
@@ -28,7 +30,7 @@ public class AcesCodeGUI extends LightweightGuiDescription {
         setRootPanel(root);
         root.setSize(300, 200);
 
-    //    AddLogo(root);
+        //    AddLogo(root);
         AddStartText(root);
 
         AddTextField(root);
@@ -80,7 +82,6 @@ public class AcesCodeGUI extends LightweightGuiDescription {
     }
 
 
-
     private void onCloseClick() {
         stopShowing = true;
         SetTitleScreen();
@@ -88,16 +89,28 @@ public class AcesCodeGUI extends LightweightGuiDescription {
 
 
     private void onConfirmClick() {
-        System.out.println(wTextField.getText());
-
         String accessCode = wTextField.getText();
-        ServerRespons serverRespons = AuthApiClient.checkAuthentication(accessCode);
-        switch (serverRespons) {
-            case CORRECT -> VowCloud.getInstance().config.setAccessCode(wTextField.getText());
-            case WRONG -> errorText = "Invalid Access Code";
-            case SERVER_DOWN -> errorText = "ERROR! VOW server is down";
-            default -> errorText = "UNKNOWN ERROR! Please open a ticket in our discord";
+        AuthInfo authInfo = AuthApiClient.getAuthInformation(accessCode);
+
+        if (authInfo.isValid()) {
+            VowCloud.getInstance().config.setAccessCode(wTextField.getText());
+            VoiceClient.serverAddress = authInfo.ip();
+            SetTitleScreen();
+            return;
         }
+
+        switch (authInfo.deniedReason()) {
+            case "invalid" -> {
+                errorText = "Invalid Access Code";
+            }
+            case "expired" -> {
+                errorText = "Expired Access Code.";
+            }
+            case "Server dow" ->{
+                errorText = "Server down. Please contact staff";
+            }
+        }
+
         SetTitleScreen();
 
 

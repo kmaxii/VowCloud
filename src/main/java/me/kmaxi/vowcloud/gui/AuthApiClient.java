@@ -1,37 +1,57 @@
 package me.kmaxi.vowcloud.gui;
 
-import java.io.IOException;
-import java.net.ConnectException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import me.kmaxi.vowcloud.AuthInfo;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class AuthApiClient {
 
-    private static final String baseUrl = "http://129.151.214.102:8080/auth";
-    private static final String apiKey = "test";
+    private static final String baseUrl = "https://voicesofwynn.com/api/premium/check";
 
 
-    public static ServerRespons checkAuthentication(String key) {
+    public static AuthInfo getAuthInformation(String key) {
         try {
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(baseUrl + "/check?key=" + key))
-                    .header("Authorization", apiKey)
-                    .build();
+            StringBuilder result = new StringBuilder();
+            URL url = new URL(baseUrl + "?code=" + key);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream()))) {
+                for (String line; (line = reader.readLine()) != null; ) {
+                    result.append(line);
+                }
+            }
+            int responseCode= conn.getResponseCode();
 
-            HttpResponse<Void> response = client.send(request, HttpResponse.BodyHandlers.discarding());
+            if (responseCode != 200) {
+                return new AuthInfo(false, "", "Server down");
+            }
 
-            return ServerRespons.mapResponse(response.statusCode());
-        } catch (ConnectException e) {
-            return ServerRespons.SERVER_DOWN;
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return ServerRespons.SERVER_ERROR;
+            JSONObject jsonObject = new JSONObject(result.toString());
+
+
+            boolean isValid = jsonObject.getBoolean("valid");
+
+
+            String ip = isValid ? jsonObject.getString("ip") : "";
+
+            String invalidReason = !isValid ? jsonObject.getString("reason") : "";
+
+            return new AuthInfo(isValid, ip, invalidReason);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
+
+    public static void main(String[] args) {
+        getAuthInformation("LPHVECSBTG0C44C8");
+    }
 
 
 }

@@ -15,9 +15,15 @@ public class VoiceClient {
     private int serverPort;
 
 
+    public static String serverAddress = "";
 
+    public VoiceClient(int serverPort) {
 
-    public VoiceClient(String serverAddress, int serverPort) {
+        if (serverAddress.isEmpty()) {
+            System.out.println("VOWCLOUD ERROR: NO SERVER ADRESS FOUND");
+            return;
+        }
+
         try {
             socket = new DatagramSocket();
             this.serverPort = serverPort;
@@ -48,6 +54,7 @@ public class VoiceClient {
 
             socket.send(sendPacket);
         } catch (IOException e) {
+            System.out.println("Error sending packet to server");
             e.printStackTrace();
         }
     }
@@ -93,7 +100,7 @@ public class VoiceClient {
 
     public static void main(String[] args) {
      //   VoiceClient client = new VoiceClient("129.151.214.102", 25565);
-        VoiceClient client = new VoiceClient("localhost", 25565);
+        VoiceClient client = new VoiceClient(25565);
 
         // Send the first request
         String request1 = "1/1aledarohyoufell!trydoingitagain.";
