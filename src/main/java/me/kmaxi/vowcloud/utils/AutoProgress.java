@@ -16,21 +16,32 @@ public class AutoProgress {
     private ScheduledFuture<?> scheduledSneak;
 
 
-    private void autoProgress(long milliSecondDelay) {
-        if (scheduledSneak != null) {
-
-            scheduledSneak.cancel(true);
-            scheduledSneak = null;
-
-            var mc = Minecraft.getInstance();
-            assert mc.player != null;
-            Objects.requireNonNull(mc.getConnection()).send(new ServerboundPlayerCommandPacket(
-                    mc.player, ServerboundPlayerCommandPacket.Action.RELEASE_SHIFT_KEY
-            ));
-        }
+    public void autoProgress(long milliSecondDelay) {
+        cancelShift();
 
         scheduledSneak = scheduleSneak(milliSecondDelay);
+    }
 
+    public void cancelShift() {
+
+        if (scheduledSneak != null) {
+            scheduledSneak.cancel(true);
+            scheduledSneak = null;
+            sendReleasePacket();
+        }
+    }
+
+    private void sendReleasePacket() {
+        var mc = Minecraft.getInstance();
+        assert mc.player != null;
+        Objects.requireNonNull(mc.getConnection()).send(new ServerboundPlayerCommandPacket(
+                mc.player, ServerboundPlayerCommandPacket.Action.RELEASE_SHIFT_KEY
+        ));
+    }
+
+    private ScheduledFuture<?> scheduleRelease(long milliSecondDelay) {
+        return scheduler.schedule(
+                this::sendReleasePacket, milliSecondDelay, TimeUnit.MILLISECONDS);
     }
 
     private ScheduledFuture<?> scheduleSneak(long milliSecondDelay) {
@@ -40,6 +51,7 @@ public class AutoProgress {
                     assert mc.player != null;
                     Objects.requireNonNull(mc.getConnection()).send(new ServerboundPlayerCommandPacket(
                             mc.player, ServerboundPlayerCommandPacket.Action.PRESS_SHIFT_KEY));
+                    scheduleRelease(100);
                 }, milliSecondDelay, TimeUnit.MILLISECONDS);
     }
 }

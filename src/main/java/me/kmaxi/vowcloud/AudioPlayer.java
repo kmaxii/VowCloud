@@ -2,6 +2,7 @@ package me.kmaxi.vowcloud;
 
 import de.maxhenkel.opus4j.OpusDecoder;
 import de.maxhenkel.opus4j.UnknownPlatformException;
+import me.kmaxi.vowcloud.utils.AutoProgress;
 import me.kmaxi.vowcloud.utils.Utils;
 
 import java.io.IOException;
@@ -18,7 +19,12 @@ public class AudioPlayer {
     public final OpenAlPlayer openAlPlayer;
 
     private LineData lastSentLineData;
+
+    public final AutoProgress autoProgress;
+
+
     private long timeWhenSentRequest;
+
 
     public void onNpcDialogue(LineData lineData) {
         lastSentLineData = lineData;
@@ -36,7 +42,7 @@ public class AudioPlayer {
             throw new RuntimeException(e);
         }
         decoder.setFrameSize(960);
-
+        autoProgress = new AutoProgress();
     }
 
     private void write(short[] data) {
@@ -70,6 +76,11 @@ public class AudioPlayer {
         openAlPlayer.updateSpeaker(audioPacket.isMovingSound() ? "" : lastSentLineData.getNPCName(), audioPacket.getPosition());
       //  Utils.sendMessage("Delay was: " + (System.currentTimeMillis() - timeWhenSentRequest) / 1000f + " seconds");
 
+        //This totalAudioLength is the length in short[] which means we do not have to divide it by the bit depth (16 / 8 = 2),
+        //As the audio is half as long as raw PCM audio.
+        long seconds = (long) (audioPacket.getTotalAudioLength() /(48000f));
+        Utils.sendMessage("Delay was: " + seconds + " seconds");
+        autoProgress.autoProgress(seconds * 1000);
     }
 
     public void stopPlayingCurrentSound() {

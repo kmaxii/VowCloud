@@ -1,5 +1,6 @@
 package me.kmaxi.vowcloud;
 
+import me.kmaxi.vowcloud.utils.AutoProgress;
 import me.kmaxi.vowcloud.utils.Utils;
 import net.minecraft.world.phys.Vec3;
 
