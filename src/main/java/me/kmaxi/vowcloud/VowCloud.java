@@ -1,5 +1,9 @@
 package me.kmaxi.vowcloud;
 
+import eu.midnightdust.lib.config.MidnightConfig;
+import me.kmaxi.vowcloud.Audio.AudioPlayer;
+import me.kmaxi.vowcloud.Audio.VoiceClient;
+import me.kmaxi.vowcloud.config.IntegratedConfig;
 import me.kmaxi.vowcloud.config.VowConfig;
 import me.kmaxi.vowcloud.text.ChatHandler3;
 import net.fabricmc.api.ModInitializer;
@@ -27,6 +31,8 @@ public class VowCloud implements ModInitializer {
         instance = this;
 
         config = new VowConfig("config/vowcloud.json");
+
+        MidnightConfig.init(MODID, IntegratedConfig.class);
 
       //  VowCloud.voiceClient = new VoiceClient("129.151.214.102", 25565);
 

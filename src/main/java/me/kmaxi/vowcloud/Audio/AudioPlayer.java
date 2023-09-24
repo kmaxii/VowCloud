@@ -2,6 +2,7 @@ package me.kmaxi.vowcloud.Audio;
 
 import de.maxhenkel.opus4j.OpusDecoder;
 import de.maxhenkel.opus4j.UnknownPlatformException;
+import me.kmaxi.vowcloud.config.IntegratedConfig;
 import me.kmaxi.vowcloud.utils.LineData;
 import me.kmaxi.vowcloud.utils.AutoProgress;
 import me.kmaxi.vowcloud.utils.Utils;
@@ -81,7 +82,8 @@ public class AudioPlayer {
         //As the audio is half as long as raw PCM audio.
         long seconds = (long) (audioPacket.getTotalAudioLength() /(48000f));
         Utils.sendMessage("Delay was: " + seconds + " seconds");
-        autoProgress.autoProgress(seconds * 1000);
+        if (IntegratedConfig.autoProgress)
+            autoProgress.autoProgress((long) (seconds * 1000 + IntegratedConfig.autoProgressDelay * 1000));
     }
 
     public void stopPlayingCurrentSound() {

@@ -22,6 +22,9 @@ repositories {
         name = "CottonMC"
         url = "https://server.bbkr.space/artifactory/libs-release"
     }
+    maven {
+        url = "https://api.modrinth.com/maven"
+    }
 }
 
 dependencies {
@@ -39,7 +42,7 @@ dependencies {
     implementation 'de.maxhenkel.lame4j:lame4j:2.0.3'
     modImplementation include("io.github.cottonmc:LibGui:7.0.0-rc.1+1.19.4")
     modImplementation include('org.json:json:20230227')
-
+    modImplementation include("maven.modrinth:midnightlib:1.1.0-fabric")
 }
 
 processResources {
