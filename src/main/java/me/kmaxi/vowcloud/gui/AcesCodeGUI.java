@@ -16,7 +16,7 @@ import net.minecraft.world.item.Items;
 
 public class AcesCodeGUI extends LightweightGuiDescription {
 
-    private final ResourceLocation image = new ResourceLocation(VowCloud.MODID, "wynnvplogo.png");
+    private final ResourceLocation image = new ResourceLocation(VowCloud.MODID, "icon.png");
 
     private WTextField wTextField;
 
