@@ -1,6 +1,5 @@
 package me.kmaxi.vowcloud.gui;
 
-import me.kmaxi.vowcloud.AuthInfo;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;

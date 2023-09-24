@@ -1,8 +1,6 @@
 package me.kmaxi.vowcloud.utils;
 
 
-import me.kmaxi.vowcloud.LineData;
-
 public class LineFormatter {
 
 

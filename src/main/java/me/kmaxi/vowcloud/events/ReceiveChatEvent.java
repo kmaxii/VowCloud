@@ -1,6 +1,6 @@
 package me.kmaxi.vowcloud.events;
 
-import me.kmaxi.vowcloud.LineData;
+import me.kmaxi.vowcloud.utils.LineData;
 import me.kmaxi.vowcloud.VowCloud;
 import me.kmaxi.vowcloud.utils.LineFormatter;
 import net.minecraft.client.Minecraft;

@@ -1,5 +1,6 @@
-package me.kmaxi.vowcloud;
+package me.kmaxi.vowcloud.Audio;
 
+import me.kmaxi.vowcloud.VowCloud;
 import me.kmaxi.vowcloud.utils.Utils;
 
 import java.io.IOException;

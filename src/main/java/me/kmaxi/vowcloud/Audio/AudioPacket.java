@@ -1,4 +1,4 @@
-package me.kmaxi.vowcloud;
+package me.kmaxi.vowcloud.Audio;
 
 import me.kmaxi.vowcloud.utils.AutoProgress;
 import me.kmaxi.vowcloud.utils.Utils;

@@ -1,8 +1,8 @@
 package me.kmaxi.vowcloud.events.mixins;
 
-import me.kmaxi.vowcloud.AudioPlayer;
-import me.kmaxi.vowcloud.AuthInfo;
-import me.kmaxi.vowcloud.VoiceClient;
+import me.kmaxi.vowcloud.Audio.AudioPlayer;
+import me.kmaxi.vowcloud.gui.AuthInfo;
+import me.kmaxi.vowcloud.Audio.VoiceClient;
 import me.kmaxi.vowcloud.VowCloud;
 import me.kmaxi.vowcloud.gui.AcesCodeGUI;
 import me.kmaxi.vowcloud.gui.AuthApiClient;

@@ -1,4 +1,4 @@
-package me.kmaxi.vowcloud;
+package me.kmaxi.vowcloud.utils;
 
 
 import java.util.regex.Pattern;
