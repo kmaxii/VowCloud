@@ -25,12 +25,10 @@ public class AudioPlayer {
     public final AutoProgress autoProgress;
 
 
-    private long timeWhenSentRequest;
 
 
     public void onNpcDialogue(LineData lineData) {
         lastSentLineData = lineData;
-        timeWhenSentRequest = System.currentTimeMillis();
     }
 
 
@@ -76,12 +74,10 @@ public class AudioPlayer {
 
         stopPlayingCurrentSound();
         openAlPlayer.updateSpeaker(audioPacket.isMovingSound() ? "" : lastSentLineData.getNPCName(), audioPacket.getPosition());
-      //  Utils.sendMessage("Delay was: " + (System.currentTimeMillis() - timeWhenSentRequest) / 1000f + " seconds");
 
         //This totalAudioLength is the length in short[] which means we do not have to divide it by the bit depth (16 / 8 = 2),
         //As the audio is half as long as raw PCM audio.
         long seconds = (long) (audioPacket.getTotalAudioLength() /(48000f));
-        Utils.sendMessage("Delay was: " + seconds + " seconds");
         if (IntegratedConfig.autoProgress)
             autoProgress.autoProgress((long) (seconds * 1000 + IntegratedConfig.autoProgressDelay * 1000));
     }
