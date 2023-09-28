@@ -37,7 +37,7 @@ public class SoundEngineStartedMixin {
 
         switch (authInfo.deniedReason()) {
             case "invalid" -> {
-                Utils.sendMessage("Invalid access code for Vow");
+                Utils.sendMessage("Invalid access code for Vow. For more info do /token in our discord: https://discord.gg/75bctycRmd");
                 AcesCodeGUI.stopShowing = false;
                 VowCloud.getInstance().config.setAccessCode("");
             }
