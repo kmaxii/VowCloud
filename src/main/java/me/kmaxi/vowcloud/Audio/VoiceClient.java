@@ -1,6 +1,7 @@
 package me.kmaxi.vowcloud.Audio;
 
 import me.kmaxi.vowcloud.VowCloud;
+import me.kmaxi.vowcloud.config.IntegratedConfig;
 import me.kmaxi.vowcloud.utils.Utils;
 
 import java.io.IOException;
@@ -19,6 +20,9 @@ public class VoiceClient {
     public static String serverAddress = "";
 
     public VoiceClient(int serverPort) {
+
+        if (IntegratedConfig.useLocalHostServer)
+            serverAddress = "localhost";
 
         if (serverAddress.isEmpty()) {
             System.out.println("VOWCLOUD ERROR: NO SERVER ADRESS FOUND");

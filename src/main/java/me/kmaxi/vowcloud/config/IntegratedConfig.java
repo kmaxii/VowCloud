@@ -13,4 +13,8 @@ public class IntegratedConfig extends MidnightConfig {
     @Entry(name = "Send fun facts")
     public static boolean sendFunFacts = true;
 
+    @Entry(name = "Use local host server.")
+    public static boolean useLocalHostServer = false;
+
+
 }
