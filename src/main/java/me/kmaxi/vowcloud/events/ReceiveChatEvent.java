@@ -50,7 +50,7 @@ public class ReceiveChatEvent {
 
     private static String replaceNameWithSoldier(String msg) {
         //Replace player Name with "soldier"
-        String name = GetPlayerName(msg);
+        String name = GetPlayerName();
         if (msg.contains(name)) {
             msg = msg.replace(name, "soldier");
         }
@@ -97,16 +97,8 @@ public class ReceiveChatEvent {
     }
 
 
-    private static String GetPlayerName(String eventMessageToString) {
-
-        String realName = Minecraft.getInstance().player.getName().getString();
-
-        String segments[] = eventMessageToString.split("hoverEvent=HoverEvent\\{action=SHOW_TEXT, value='TextComponent\\{text='");
-        if (segments.length <= 1) return realName;
-
-        String name = segments[segments.length - 1].split("',")[0];
-        if (name.contains("Previous")) return realName;
-        return name.split("'")[0];
+    private static String GetPlayerName() {
+        return VowCloud.getInstance().config.getLastPlayedCharacterName();
 
     }
 }

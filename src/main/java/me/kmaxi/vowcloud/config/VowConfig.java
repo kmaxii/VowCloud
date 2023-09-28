@@ -1,8 +1,11 @@
 package me.kmaxi.vowcloud.config;
 
+import net.minecraft.client.Minecraft;
+
 public class VowConfig extends Config{
 
     private static final String ACCESS_CODE = "ACCESS_CODE";
+    private static final String CHARACTER_NAME = "CHARACTER_NAME";
     public VowConfig(String configFileName) {
         super(configFileName);
     }
@@ -13,5 +16,13 @@ public class VowConfig extends Config{
 
     public void setAccessCode(String accessCode){
         setString(ACCESS_CODE, accessCode);
+    }
+
+    public String getLastPlayedCharacterName(){
+        return getString(CHARACTER_NAME, Minecraft.getInstance().player.getName().getString());
+    }
+
+    public void setLastPlayedCharacterName(String lastPlayedCharacterName){
+        setString(CHARACTER_NAME, lastPlayedCharacterName);
     }
 }

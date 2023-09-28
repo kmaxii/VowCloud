@@ -4,8 +4,10 @@
   "package": "me.kmaxi.vowcloud.events.mixins",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "ContainerClickPacketMixin"
   ],
   "client": [
+    "GuiOpenListener",
     "MixinPacketListener",
     "MixinServerConnectListener",
     "MixinShowGuiListener",
