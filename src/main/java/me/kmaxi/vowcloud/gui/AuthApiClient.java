@@ -43,8 +43,9 @@ public class AuthApiClient {
             return new AuthInfo(isValid, ip, invalidReason);
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+           // throw new RuntimeException(e);
         }
+        return null;
     }
 
 

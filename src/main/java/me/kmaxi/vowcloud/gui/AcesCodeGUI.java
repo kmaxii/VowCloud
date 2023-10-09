@@ -7,6 +7,7 @@ import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.github.cottonmc.cotton.gui.widget.icon.ItemIcon;
 import me.kmaxi.vowcloud.Audio.VoiceClient;
 import me.kmaxi.vowcloud.VowCloud;
+import me.kmaxi.vowcloud.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.network.chat.Component;
@@ -45,7 +46,7 @@ public class AcesCodeGUI extends LightweightGuiDescription {
     private void AddStartText(WGridPanel root) {
         root.add(new WLabel(Component.literal("VOICES OF WYNN")).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 1);
         root.add(new WLabel(Component.literal("Please enter your unique access code:")).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 2);
-        root.add(new WLabel(Component.literal("To get it do /token in the Vow discord (discord.gg/vow)")).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 3);
+        root.add(new WLabel(Component.literal("To get it do /token in the Vow discord (discord.gg/Gd68zftm)")).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 3);
         root.add(new WLabel(Component.literal("§c" + errorText)).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 5);
 
     /*    root.add(new WLabel(Component.literal("encountered while playing Wynncraft to improve")).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 3);
@@ -91,7 +92,10 @@ public class AcesCodeGUI extends LightweightGuiDescription {
     private void onConfirmClick() {
         String accessCode = wTextField.getText();
         AuthInfo authInfo = AuthApiClient.getAuthInformation(accessCode);
-
+        if (authInfo == null){
+            Utils.sendMessage("VOWCLOUD ERROR! AUTH INFO IS NULL");
+            return;
+        }
         if (authInfo.isValid()) {
             VowCloud.getInstance().config.setAccessCode(wTextField.getText());
             VoiceClient.serverAddress = authInfo.ip();
@@ -106,7 +110,7 @@ public class AcesCodeGUI extends LightweightGuiDescription {
             case "expired" -> {
                 errorText = "Expired Access Code.";
             }
-            case "Server dow" ->{
+            case "Server down" ->{
                 errorText = "Server down. Please contact staff";
             }
         }

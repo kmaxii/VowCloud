@@ -28,6 +28,11 @@ public class SoundEngineStartedMixin {
 
         AuthInfo authInfo = AuthApiClient.getAuthInformation(VowCloud.getInstance().config.getAccessCode());
 
+        if (authInfo == null){
+            Utils.sendMessage("VOWCLOUD ERROR! AUTH INFO IS NULL");
+            return;
+        }
+
         if (authInfo.isValid()) {
             VoiceClient.serverAddress = authInfo.ip();
             VowCloud.getInstance().audioPlayer = new AudioPlayer();
