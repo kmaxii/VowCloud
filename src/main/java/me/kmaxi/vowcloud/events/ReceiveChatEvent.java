@@ -1,5 +1,6 @@
 package me.kmaxi.vowcloud.events;
 
+import me.kmaxi.vowcloud.Audio.AudioPlayer;
 import me.kmaxi.vowcloud.utils.LineData;
 import me.kmaxi.vowcloud.VowCloud;
 import me.kmaxi.vowcloud.utils.LineFormatter;
@@ -43,7 +44,11 @@ public class ReceiveChatEvent {
             }
         }
 
-        VowCloud.getInstance().audioPlayer.onNpcDialogue(lineData);
+        AudioPlayer audioPlayer = VowCloud.getInstance().audioPlayer;
+        if (audioPlayer == null)
+            return;
+
+        audioPlayer.onNpcDialogue(lineData);
         if (VowCloud.voiceClient != null)
             VowCloud.voiceClient.sendRequest(lineData.getSoundLine());
     }

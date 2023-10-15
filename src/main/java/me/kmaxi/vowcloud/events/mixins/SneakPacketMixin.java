@@ -1,5 +1,6 @@
 package me.kmaxi.vowcloud.events.mixins;
 
+import me.kmaxi.vowcloud.Audio.AudioPlayer;
 import me.kmaxi.vowcloud.VowCloud;
 import me.kmaxi.vowcloud.events.ReceiveChatEvent;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
@@ -23,6 +24,13 @@ public class SneakPacketMixin {
             return;
         }
         ReceiveChatEvent.resetCooldowns();
+
+        AudioPlayer audioPlayer = VowCloud.getInstance().audioPlayer;
+
+        if (audioPlayer == null) {
+            return;
+        }
+
         VowCloud.getInstance().audioPlayer.autoProgress.cancelShift();
     }
 

@@ -3,6 +3,7 @@ package me.kmaxi.vowcloud.utils;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import me.kmaxi.vowcloud.VowCloud;
 import me.kmaxi.vowcloud.config.IntegratedConfig;
 import me.kmaxi.vowcloud.events.ReceiveChatEvent;
 import net.minecraft.client.Minecraft;
@@ -43,8 +44,8 @@ public class VersionChecker {
             return;
         }
 
-        String version = System.getProperty("mod_version");
-        Utils.sendMessage("Version: " + version + " | Newest Version: " + newestVersion);
+        String version = VowCloud.VERSION;
+        //Utils.sendMessage("Version: " + version + " | Newest Version: " + newestVersion);
 
 
         float versionInFloat = GetVersionNumberInFloat(version);
