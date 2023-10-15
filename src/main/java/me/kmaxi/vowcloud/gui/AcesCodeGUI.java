@@ -44,9 +44,9 @@ public class AcesCodeGUI extends LightweightGuiDescription {
     }
 
     private void AddStartText(WGridPanel root) {
-        root.add(new WLabel(Component.literal("VOICES OF WYNN")).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 1);
-        root.add(new WLabel(Component.literal("Please enter your unique access code:")).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 2);
-        root.add(new WLabel(Component.literal("To get it do /token in the Vow discord (discord.gg/Gd68zftm)")).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 3);
+        root.add(new WLabel(Component.literal("§5VOICES OF WYNN")).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 1);
+        root.add(new WLabel(Component.literal("§fPlease enter your unique access code:")).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 2);
+        root.add(new WLabel(Component.literal("§fTo get it do /token in the Vow discord (discord.gg/Gd68zftm)")).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 3);
         root.add(new WLabel(Component.literal("§c" + errorText)).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 5);
 
     /*    root.add(new WLabel(Component.literal("encountered while playing Wynncraft to improve")).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 3);
@@ -63,18 +63,18 @@ public class AcesCodeGUI extends LightweightGuiDescription {
 
 
     private void AddButtons(WGridPanel root) {
-        WButton noneButton = new WButton(Component.literal("Confirm"));
-        noneButton.setOnClick(this::onConfirmClick);
-        noneButton.setAlignment(HorizontalAlignment.CENTER);
-        // noneButton.setIcon(new ItemIcon(new ItemStack(Items.DIAMOND)));
-        root.add(noneButton, 6, 9, 4, 20);
+        WButton confirmButton = new WButton(Component.literal("Confirm"));
+        confirmButton.setOnClick(this::onConfirmClick);
+        confirmButton.setAlignment(HorizontalAlignment.CENTER);
+        // confirmButton.setIcon(new ItemIcon(new ItemStack(Items.DIAMOND)));
+        root.add(confirmButton, 3, 9, 4, 1);
 
 
         WButton closeButton = new WButton(Component.literal("§cClose"));
         closeButton.setOnClick(this::onCloseClick);
         closeButton.setAlignment(HorizontalAlignment.CENTER);
         closeButton.setIcon(new ItemIcon(new ItemStack(Items.BARRIER)));
-        root.add(closeButton, 12, 9, 4, 20);
+        root.add(closeButton, 10, 9, 4, 1);
 
     }
 
