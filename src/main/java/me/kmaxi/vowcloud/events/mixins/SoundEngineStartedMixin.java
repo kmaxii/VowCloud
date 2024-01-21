@@ -1,6 +1,7 @@
 package me.kmaxi.vowcloud.events.mixins;
 
 import me.kmaxi.vowcloud.Audio.AudioPlayer;
+import me.kmaxi.vowcloud.config.IntegratedConfig;
 import me.kmaxi.vowcloud.gui.AuthInfo;
 import me.kmaxi.vowcloud.Audio.VoiceClient;
 import me.kmaxi.vowcloud.VowCloud;
@@ -34,7 +35,7 @@ public class SoundEngineStartedMixin {
         }
 
         if (authInfo.isValid()) {
-            VoiceClient.serverAddress = authInfo.ip();
+            VoiceClient.serverAddress = IntegratedConfig.useLocalHostServer ? "localhost" : authInfo.ip();
             VowCloud.getInstance().audioPlayer = new AudioPlayer();
             VowCloud.voiceClient = new VoiceClient(25565);
             return;
@@ -42,12 +43,12 @@ public class SoundEngineStartedMixin {
 
         switch (authInfo.deniedReason()) {
             case "invalid" -> {
-                Utils.sendMessage("Invalid access code for Vow. For more info do /token in our discord: https://discord.gg/75bctycRmd");
+                Utils.sendMessage("Invalid access code for Vow. For more info do /token in our discord: https://discord.gg/uDuqhMyrUK");
                 AcesCodeGUI.stopShowing = false;
                 VowCloud.getInstance().config.setAccessCode("");
             }
             case "expired" -> Utils.sendMessage("Expired access code for Vow. Please update your subscription");
-            case "Server dow" -> Utils.sendMessage("ERROR! Server down. Please contact staff");
+            case "Server down" -> Utils.sendMessage("ERROR! Server down. Please contact staff");
         }
 
     }
