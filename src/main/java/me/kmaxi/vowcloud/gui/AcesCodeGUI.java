@@ -69,7 +69,6 @@ public class AcesCodeGUI extends LightweightGuiDescription {
 
 
     private void AddNormalVersionInfo(WGridPanel root) {
-        wTextField = new WTextField();
         root.add(new WLabel(Component.literal("§fIf you're not a supporter you can still use the public classic version:")).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 9);
         WButton openDownloadLink = new WButton(Component.literal("Download Classic Version"));
         String url = "https://www.curseforge.com/minecraft/mc-mods/voices-of-wynn/files/all?page=1&pageSize=20";
