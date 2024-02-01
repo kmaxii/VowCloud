@@ -5,6 +5,7 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 
@@ -43,5 +44,14 @@ public class Utils {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+
+    public static String HTTPEncode(String input){
+        return URLEncoder.encode(input, StandardCharsets.UTF_8);
+    }
+
+    public static String HTTPDecode(String input){
+        return java.net.URLDecoder.decode(input, StandardCharsets.UTF_8);
     }
 }
