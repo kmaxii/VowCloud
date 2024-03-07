@@ -32,7 +32,7 @@ public class VowCloud implements ModInitializer {
         chatHandler3 = new ChatHandler3();
         instance = this;
 
-        config = new VowConfig("config/vowcloud.json");
+        config = new VowConfig("config/vowcloudtoken.json");
 
         MidnightConfig.init(MODID, IntegratedConfig.class);
 
