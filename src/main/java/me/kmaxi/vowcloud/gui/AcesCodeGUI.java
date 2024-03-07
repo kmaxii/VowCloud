@@ -8,6 +8,7 @@ import io.github.cottonmc.cotton.gui.widget.icon.Icon;
 import io.github.cottonmc.cotton.gui.widget.icon.ItemIcon;
 import me.kmaxi.vowcloud.Audio.VoiceClient;
 import me.kmaxi.vowcloud.VowCloud;
+import me.kmaxi.vowcloud.utils.SetupServerConnection;
 import me.kmaxi.vowcloud.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -160,6 +161,7 @@ public class AcesCodeGUI extends LightweightGuiDescription {
             VowCloud.getInstance().config.setAccessCode(wTextField.getText());
             VoiceClient.serverAddress = authInfo.ip();
             SetTitleScreen();
+            SetupServerConnection.setupConnection();
             return;
         }
 
