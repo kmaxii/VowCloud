@@ -1,6 +1,9 @@
 package me.kmaxi.vowcloud.gui;
 
-import org.json.JSONObject;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import me.kmaxi.vowcloud.Loggers;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -29,18 +32,18 @@ public class AuthApiClient {
             if (responseCode != 200) {
                 return new AuthInfo(false, "", "Server down");
             }
+            Gson gson = new Gson();
 
-            JSONObject jsonObject = new JSONObject(result.toString());
-
-
-            boolean isValid = jsonObject.getBoolean("valid");
+            AuthResponse authResponse = gson.fromJson(result.toString(), AuthResponse.class);
 
 
-            String ip = isValid ? jsonObject.getString("ip") : "";
+            boolean isValid = authResponse.isValid();
+            String ip = isValid ? authResponse.getIp() : "";
+            String invalidReason = !isValid ? authResponse.getReason() : "";
 
-            String invalidReason = !isValid ? jsonObject.getString("reason") : "";
+            Loggers.log("Auth response: " + authResponse.isValid() + " " + authResponse.getIp() + " " + authResponse.getReason());
 
-            return new AuthInfo(isValid, ip, invalidReason);
+            return new AuthInfo(authResponse.isValid(), ip, invalidReason);
 
         } catch (Exception e) {
            // throw new RuntimeException(e);
@@ -53,5 +56,22 @@ public class AuthApiClient {
         getAuthInformation("LPHVECSBTG0C44C8");
     }
 
+    class AuthResponse {
+        private boolean valid;
+        private String ip;
+        private String reason;
+
+        public boolean isValid() {
+            return valid;
+        }
+
+        public String getIp() {
+            return ip;
+        }
+
+        public String getReason() {
+            return reason;
+        }
+    }
 
 }
