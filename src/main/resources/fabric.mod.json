@@ -2,16 +2,17 @@
   "schemaVersion": 1,
   "id": "vowcloud",
   "version": "${version}",
-  "name": "VowCloud",
-  "description": "",
+  "name": "Vow Cloud",
+  "description": "Provides voice acting to Wynncraft npcs which is streamed through a server",
   "authors": [
     "kmaxi"
   ],
   "contact": {
     "website": "https://voicesofwynn.com",
-    "repo": "https://github.com/kmaxii/VowCloud"
+    "repo": "https://github.com/kmaxii/VowCloud",
+    "issues": "https://github.com/kmaxii/VowCloud/issues"
   },
-  "license": "All-Rights-Reserved",
+  "license": "GPL",
   "icon": "assets/vowcloud/icon.png",
   "environment": "client",
   "entrypoints": {
