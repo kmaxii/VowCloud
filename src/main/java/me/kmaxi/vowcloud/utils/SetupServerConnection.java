@@ -2,7 +2,6 @@ package me.kmaxi.vowcloud.utils;
 
 import me.kmaxi.vowcloud.Audio.VoiceClient;
 import me.kmaxi.vowcloud.VowCloud;
-import me.kmaxi.vowcloud.config.IntegratedConfig;
 import me.kmaxi.vowcloud.gui.AcesCodeGUI;
 import me.kmaxi.vowcloud.gui.AuthApiClient;
 import me.kmaxi.vowcloud.gui.AuthInfo;
@@ -22,7 +21,7 @@ public class SetupServerConnection {
         }
 
         if (authInfo.isValid()) {
-            VoiceClient.serverAddress = IntegratedConfig.useLocalHostServer ? "localhost" : authInfo.ip();
+            VoiceClient.serverAddress = VowCloud.CONFIG.useLocalHostServer.get() ? "localhost" : authInfo.ip();
             VowCloud.voiceClient = new VoiceClient(25565);
             return;
         }

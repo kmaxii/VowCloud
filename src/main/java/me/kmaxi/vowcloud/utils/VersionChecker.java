@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import me.kmaxi.vowcloud.VowCloud;
-import me.kmaxi.vowcloud.config.IntegratedConfig;
 import me.kmaxi.vowcloud.events.ReceiveChatEvent;
 import net.minecraft.client.Minecraft;
 
@@ -65,7 +64,7 @@ public class VersionChecker {
         //Is using the newest version
         if (versionInFloat > updateVersionInFloat) {
 
-            if (fact != null && IntegratedConfig.sendFunFacts) {
+            if (fact != null && VowCloud.CONFIG.sendFunFacts.get()) {
                 Utils.sendMessage("§9Fun fact: " + fact);
             }
             return;

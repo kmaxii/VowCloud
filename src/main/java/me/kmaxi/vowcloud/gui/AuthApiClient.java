@@ -41,8 +41,6 @@ public class AuthApiClient {
             String ip = isValid ? authResponse.getIp() : "";
             String invalidReason = !isValid ? authResponse.getReason() : "";
 
-            Loggers.log("Auth response: " + authResponse.isValid() + " " + authResponse.getIp() + " " + authResponse.getReason());
-
             return new AuthInfo(authResponse.isValid(), ip, invalidReason);
 
         } catch (Exception e) {

@@ -1,0 +1,22 @@
+{
+  "cloth_config.vow_cloud.settings": "VowCloud Settings",
+
+  "cloth_config.vow_cloud.category.general": "General",
+  "cloth_config.vow_cloud.category.debug": "Debug",
+
+  "cloth_config.vow_cloud.enabled": "Enable mod",
+  "cloth_config.vow_cloud.enabled.description": "Enables/Disables the connecting to custom server and playing audio.",
+
+  "cloth_config.vow_cloud.auto_progress": "Auto progress",
+  "cloth_config.vow_cloud.auto_progress.description": "Automatically progress to next dialogue when one finished playing",
+
+  "cloth_config.vow_cloud.auto_progress_delay": "Auto progress delay",
+  "cloth_config.vow_cloud.auto_progress_delay.description": "The delay to add until progressed when audio finished playing",
+
+  "cloth_config.vow_cloud.send_fun_facts": "Send fun fact",
+  "cloth_config.vow_cloud.send_fun_facts.description": "Sends a fun fact in chat when joining Wynncraft",
+
+  "cloth_config.vow_cloud.use_local_host": "Use localhost server",
+  "cloth_config.vow_cloud.use_local_host.description": "Use a localhost server for the mod. ONLY SET THIS TO TRUE IF YOU KNOW WHAT YOU ARE DOING!"
+
+}

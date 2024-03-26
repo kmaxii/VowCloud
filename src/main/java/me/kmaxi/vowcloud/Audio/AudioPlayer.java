@@ -2,7 +2,8 @@ package me.kmaxi.vowcloud.Audio;
 
 import de.maxhenkel.opus4j.OpusDecoder;
 import de.maxhenkel.opus4j.UnknownPlatformException;
-import me.kmaxi.vowcloud.config.IntegratedConfig;
+import me.kmaxi.vowcloud.VowCloud;
+import me.kmaxi.vowcloud.config.VowConfig;
 import me.kmaxi.vowcloud.utils.AutoProgress;
 import me.kmaxi.vowcloud.utils.LineData;
 
@@ -75,8 +76,8 @@ public class AudioPlayer {
         //This totalAudioLength is the length in short[] which means we do not have to divide it by the bit depth (16 / 8 = 2),
         //As the audio is half as long as raw PCM audio.
         long seconds = (long) (audioPacket.getTotalAudioLength() / (48000f));
-        if (IntegratedConfig.autoProgress)
-            autoProgress.autoProgress((long) (seconds * 1000 + IntegratedConfig.autoProgressDelay * 1000));
+        if (VowCloud.CONFIG.autoProgress.get())
+            autoProgress.autoProgress((long) (seconds * 1000 + VowCloud.CONFIG.autoProgressDelay.get() * 1000));
     }
 
     public void stopPlayingCurrentSound() {

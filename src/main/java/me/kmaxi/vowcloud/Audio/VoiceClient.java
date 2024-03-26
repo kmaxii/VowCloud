@@ -2,7 +2,6 @@ package me.kmaxi.vowcloud.Audio;
 
 import me.kmaxi.vowcloud.Loggers;
 import me.kmaxi.vowcloud.VowCloud;
-import me.kmaxi.vowcloud.config.IntegratedConfig;
 import me.kmaxi.vowcloud.utils.Utils;
 
 import java.io.IOException;
@@ -22,7 +21,7 @@ public class VoiceClient {
 
     public VoiceClient(int serverPort) {
 
-        if (IntegratedConfig.useLocalHostServer)
+        if (VowCloud.CONFIG.useLocalHostServer.get())
             serverAddress = "localhost";
 
         if (serverAddress.isEmpty()) {
@@ -34,7 +33,7 @@ public class VoiceClient {
             socket = new DatagramSocket();
             this.serverPort = serverPort;
             serverInetAddress = InetAddress.getByName(serverAddress);
-            Loggers.error("Connected to server.");
+            Loggers.log("Connected to server.");
         } catch (IOException e) {
             e.printStackTrace();
         }

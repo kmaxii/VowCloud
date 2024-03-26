@@ -1,13 +1,14 @@
 package me.kmaxi.vowcloud;
 
-import eu.midnightdust.lib.config.MidnightConfig;
+import de.maxhenkel.configbuilder.ConfigBuilder;
 import me.kmaxi.vowcloud.Audio.AudioPlayer;
 import me.kmaxi.vowcloud.Audio.VoiceClient;
-import me.kmaxi.vowcloud.config.IntegratedConfig;
 import me.kmaxi.vowcloud.config.VowConfig;
+import me.kmaxi.vowcloud.config.VowUserConfig;
 import me.kmaxi.vowcloud.text.ChatHandler3;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.loader.api.FabricLoader;
 
 public class VowCloud implements ModInitializer {
 
@@ -18,27 +19,26 @@ public class VowCloud implements ModInitializer {
     public AudioPlayer audioPlayer;
 
 
-    public VowConfig config;
+    public VowUserConfig config;
+
+    public static VowConfig CONFIG;
 
     public static String MODID = "vowcloud";
     public static final String VERSION = "1.4";
 
 
-    public static VowCloud getInstance(){
+    public static VowCloud getInstance() {
         return instance;
     }
+
     @Override
     public void onInitialize() {
+        Loggers.log("Initializing VowCloud");
+
         chatHandler3 = new ChatHandler3();
         instance = this;
 
-        Loggers.log("Initializing VowCloud");
-
-        config = new VowConfig("config/vowcloudtoken.json");
-
-        MidnightConfig.init(MODID, IntegratedConfig.class);
-
-      //  VowCloud.voiceClient = new VoiceClient("129.151.214.102", 25565);
+        InitializeConfig();
 
 
         ClientTickEvents.END_WORLD_TICK.register(cli -> {
@@ -47,6 +47,15 @@ public class VowCloud implements ModInitializer {
             if (audioPlayer != null)
                 audioPlayer.openAlPlayer.onTick();
         });
+    }
+
+    private void InitializeConfig() {
+        config = new VowUserConfig("config/vowcloudtoken.json");
+        if (CONFIG == null) {
+            CONFIG = ConfigBuilder.builder(VowConfig::new)
+                    .path(FabricLoader.getInstance().getConfigDir()
+                            .resolve(MODID).resolve("vowcloud.properties")).build();
+        }
     }
 
 
