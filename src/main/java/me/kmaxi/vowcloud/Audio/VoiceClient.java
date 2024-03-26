@@ -1,5 +1,6 @@
 package me.kmaxi.vowcloud.Audio;
 
+import me.kmaxi.vowcloud.Loggers;
 import me.kmaxi.vowcloud.VowCloud;
 import me.kmaxi.vowcloud.config.IntegratedConfig;
 import me.kmaxi.vowcloud.utils.Utils;
@@ -25,7 +26,7 @@ public class VoiceClient {
             serverAddress = "localhost";
 
         if (serverAddress.isEmpty()) {
-            System.out.println("VOWCLOUD ERROR: NO SERVER ADRESS FOUND");
+            Loggers.error("NO SERVER ADRESS FOUND");
             return;
         }
 
@@ -33,7 +34,7 @@ public class VoiceClient {
             socket = new DatagramSocket();
             this.serverPort = serverPort;
             serverInetAddress = InetAddress.getByName(serverAddress);
-            System.out.println("Connected to server.");
+            Loggers.error("Connected to server.");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -59,7 +60,7 @@ public class VoiceClient {
 
             socket.send(sendPacket);
         } catch (IOException e) {
-            System.out.println("Error sending packet to server");
+            Loggers.error("Error sending packet to server");
             e.printStackTrace();
         }
     }
@@ -81,7 +82,6 @@ public class VoiceClient {
 
                     // Set connectionLost to true to exit the loop
                     connectionLost = true;
-                    System.out.println("Lost connection to server");
                     Utils.sendMessage("Lost connection to server");
                     continue;
                 }
@@ -99,7 +99,7 @@ public class VoiceClient {
     public void closeConnection() {
         if (socket != null) {
             socket.close();
-            System.out.println("Connection closed.");
+            Loggers.log("Connection closed");
         }
     }
 

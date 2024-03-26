@@ -4,25 +4,17 @@ package me.kmaxi.vowcloud.gui;
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.*;
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
-import io.github.cottonmc.cotton.gui.widget.icon.Icon;
-import io.github.cottonmc.cotton.gui.widget.icon.ItemIcon;
 import me.kmaxi.vowcloud.Audio.VoiceClient;
+import me.kmaxi.vowcloud.Loggers;
 import me.kmaxi.vowcloud.VowCloud;
 import me.kmaxi.vowcloud.utils.SetupServerConnection;
 import me.kmaxi.vowcloud.utils.Utils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import org.jetbrains.annotations.Debug;
 
-import java.awt.*;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 public class AcesCodeGUI extends LightweightGuiDescription {
 
@@ -103,7 +95,7 @@ public class AcesCodeGUI extends LightweightGuiDescription {
                         cmd.append(String.format(" || %s \"%s\"", browsers[i], url));
                 rt.exec(new String[] { "sh", "-c", cmd.toString() });
             } else {
-                System.err.println("Unsupported Operating System for browser opening.");
+                Loggers.error("Unsupported Operating System for browser opening.");
             }
         } catch (IOException e) {
             e.printStackTrace();

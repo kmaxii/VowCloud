@@ -5,8 +5,8 @@
  */
 package me.kmaxi.vowcloud.text;
 
+import me.kmaxi.vowcloud.Loggers;
 import me.kmaxi.vowcloud.events.ReceiveChatEvent;
-import me.kmaxi.vowcloud.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundRemoveMobEffectPacket;
@@ -200,7 +200,7 @@ public final class ChatHandler3 {
                 // After this we assume a blank line
                 newLines.removeFirst();
             } else {
-                System.out.println("Wynnvp: Malformed dialog [#1]: \" + newLines.getFirst()");;
+                Loggers.error("Malformed dialog [#1]: " + newLines.getFirst());;
             }
 
             boolean dialogDone = false;

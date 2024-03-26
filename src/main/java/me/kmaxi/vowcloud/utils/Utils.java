@@ -1,5 +1,6 @@
 package me.kmaxi.vowcloud.utils;
 
+import me.kmaxi.vowcloud.Loggers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -15,7 +16,7 @@ public class Utils {
         //&& Minecraft.getInstance().inGameHud != null && Minecraft.getInstance().inGameHud.getChatHud() != null
         if (Minecraft.getInstance().player != null)
             Minecraft.getInstance().gui.getChat().addMessage(Component.literal("§5[Voices of Wynn]§r " + text));
-        System.out.println(text);
+        Loggers.log(text);
     }
 
     public static void appendMessageWithLinkAndSend(String text, String url, String clickText) {

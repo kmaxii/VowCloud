@@ -1,5 +1,6 @@
 package me.kmaxi.vowcloud.Audio;
 
+import me.kmaxi.vowcloud.Loggers;
 import me.kmaxi.vowcloud.npc.CurrentSpeaker;
 import net.minecraft.world.phys.Vec3;
 import org.lwjgl.openal.*;
@@ -10,8 +11,6 @@ import java.util.concurrent.Executors;
 
 
 public class OpenAlPlayer {
-    private long device;
-    private long context;
     private int sourceID;
     private final ExecutorService executorService;
 
@@ -127,7 +126,7 @@ public class OpenAlPlayer {
     private void writeSync(short[] data) {
         int queuedBuffers = AL11.alGetSourcei(sourceID, AL11.AL_BUFFERS_QUEUED);
         if (queuedBuffers >= buffers.length) {
-            System.out.println("WARNING! AUDIO BUFFERS RAN OUT");
+            Loggers.error("WARNING! AUDIO BUFFERS RAN OUT");
             int sampleOffset = AL11.alGetSourcei(sourceID, AL11.AL_SAMPLE_OFFSET);
             int buffersToSkip = queuedBuffers - 100;
             AL11.alSourcei(sourceID, AL11.AL_SAMPLE_OFFSET, sampleOffset + buffersToSkip * bufferSampleSize);
@@ -170,8 +169,6 @@ public class OpenAlPlayer {
     public void cleanup() {
         AL10.alDeleteSources(sourceID);
         AL10.alDeleteBuffers(buffers);
-        ALC11.alcDestroyContext(context);
-        ALC11.alcCloseDevice(device);
         executorService.shutdown(); // Shutdown the executor
     }
 }
