@@ -12,7 +12,8 @@
     "MixinServerConnectListener",
     "MixinShowGuiListener",
     "SneakPacketMixin",
-    "SoundEngineStartedMixin"
+    "SoundEngineStartedMixin",
+    "LibraryMixin"
   ],
   "injectors": {
     "defaultRequire": 1

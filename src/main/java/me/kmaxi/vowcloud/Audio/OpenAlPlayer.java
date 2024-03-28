@@ -9,6 +9,9 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static org.lwjgl.openal.AL11.alSource3i;
+import static org.lwjgl.openal.EXTEfx.*;
+
 
 public class OpenAlPlayer {
     private int sourceID;
@@ -36,13 +39,13 @@ public class OpenAlPlayer {
         executorService = Executors.newSingleThreadExecutor();
         createOpelAL();
     }
+    private static SoundEffects soundEffects;
+
 
     private void createOpelAL() {
-
         executorService.execute(() -> {
             // Create an OpenAL source
             sourceID = AL10.alGenSources();
-
 
             // Create an OpenAL buffer
             AL10.alGenBuffers(buffers);
@@ -50,9 +53,10 @@ public class OpenAlPlayer {
             AL11.alSourcef(sourceID, AL11.AL_MAX_DISTANCE, maxDistance);
             AL11.alSourcef(sourceID, AL11.AL_REFERENCE_DISTANCE, 0F);
 
+            soundEffects = new SoundEffects(sourceID);
+
+
         });
-
-
     }
 
 
