@@ -77,10 +77,23 @@ public class SoundEffects {
         }
 
         for (int i = 0; i < 4; i++) {
-            reverbs[i] = EXTEfx.alGenEffects();
-            EXTEfx.alEffecti(reverbs[i], EXTEfx.AL_EFFECT_TYPE, EXTEfx.AL_EFFECT_EAXREVERB);
+            int reverbSlot = EXTEfx.alGenEffects();
+            reverbs[i] = reverbSlot;
+            EXTEfx.alEffecti(reverbSlot, EXTEfx.AL_EFFECT_TYPE, EXTEfx.AL_EFFECT_EAXREVERB);
+            ReverbParams params = ReverbParams.getReverbParams(i);
+            EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_DENSITY, params.density);
+            EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_DIFFUSION, params.diffusion);
+            EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_GAIN, params.gain);
+            EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_GAINHF, params.gainHF);
+            EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_DECAY_TIME, params.decayTime);
+            EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_DECAY_HFRATIO, params.decayHFRatio);
+            EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_REFLECTIONS_GAIN, params.reflectionsGain);
+            EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_LATE_REVERB_GAIN, params.lateReverbGain);
+            EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_LATE_REVERB_DELAY, params.lateReverbDelay);
+            EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_AIR_ABSORPTION_GAINHF, params.airAbsorptionGainHF);
+            EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_ROOM_ROLLOFF_FACTOR, params.roomRolloffFactor);
+            EXTEfx.alAuxiliaryEffectSloti(auxFXSlots[i], EXTEfx.AL_EFFECTSLOT_EFFECT, reverbSlot);
         }
-
         directFilter = EXTEfx.alGenFilters();
         EXTEfx.alFilteri(directFilter, EXTEfx.AL_FILTER_TYPE, EXTEfx.AL_FILTER_LOWPASS);
 
@@ -88,32 +101,6 @@ public class SoundEffects {
             sendFilters[i] = EXTEfx.alGenFilters();
             EXTEfx.alFilteri(sendFilters[i], EXTEfx.AL_FILTER_TYPE, EXTEfx.AL_FILTER_LOWPASS);
         }
-        syncReverbParams();
     }
 
-    private void syncReverbParams() {
-        //Set the global reverb parameters and apply them to the effect and effectslot
-        setReverbParams(ReverbParams.getReverb0(), auxFXSlots[0], reverbs[0]);
-        setReverbParams(ReverbParams.getReverb1(), auxFXSlots[1], reverbs[1]);
-        setReverbParams(ReverbParams.getReverb2(), auxFXSlots[2], reverbs[2]);
-        setReverbParams(ReverbParams.getReverb3(), auxFXSlots[3], reverbs[3]);
-
-    }
-
-    protected static void setReverbParams(ReverbParams r, int auxFXSlot, int reverbSlot) {
-        EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_DENSITY, r.density);
-        EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_DIFFUSION, r.diffusion);
-        EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_GAIN, r.gain);
-        EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_GAINHF, r.gainHF);
-        EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_DECAY_TIME, r.decayTime);
-        EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_DECAY_HFRATIO, r.decayHFRatio);
-        EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_REFLECTIONS_GAIN, r.reflectionsGain);
-        EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_LATE_REVERB_GAIN, r.lateReverbGain);
-        EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_LATE_REVERB_DELAY, r.lateReverbDelay);
-        EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_AIR_ABSORPTION_GAINHF, r.airAbsorptionGainHF);
-        EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_ROOM_ROLLOFF_FACTOR, r.roomRolloffFactor);
-
-        // Attach updated effect object
-        EXTEfx.alAuxiliaryEffectSloti(auxFXSlot, EXTEfx.AL_EFFECTSLOT_EFFECT, reverbSlot);
-    }
 }
