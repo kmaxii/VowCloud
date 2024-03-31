@@ -156,11 +156,7 @@ public class OpenAlPlayer {
 
             AL11.alSource3f(sourceID, AL11.AL_POSITION, (float) pos.x, (float) pos.y, (float) pos.z);
 
-          //  soundEffects.evaluateEnvironment(sourceID, pos.x, pos.y, pos.z, false);
-            soundEffects.setEcho();
-            //Set the environment to extreme values for testing
-         //   soundEffects.setEnvironment(sourceID, 1,1, 1, 1, 1, 1, 1, 1, 1, 1);
-            Loggers.log("enabling echo");
+           soundEffects.evaluateEnvironment(sourceID, pos.x, pos.y, pos.z, false);
         },  () -> {
 
             AL11.alSourcei(sourceID, AL11.AL_SOURCE_RELATIVE, AL11.AL_TRUE);

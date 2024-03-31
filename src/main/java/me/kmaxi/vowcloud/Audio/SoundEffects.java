@@ -63,6 +63,7 @@ public class SoundEffects {
 
         setupEFX();
 
+      //  setEcho();
 
 
 
@@ -87,9 +88,7 @@ public class SoundEffects {
     public void setEcho() {
 
         if (!hasSetUp) {
-
             reverbSlot = alGenAuxiliaryEffectSlots();
-            // Apply EFX effect
             echoSlot = alGenAuxiliaryEffectSlots();
             normalReverbSlot = alGenAuxiliaryEffectSlots();
             reverbEffect = alGenEffects();
@@ -100,10 +99,6 @@ public class SoundEffects {
             alEffecti(reverbEffect, AL_EFFECT_TYPE, AL_EFFECT_EAXREVERB);
             alEffecti(echoEffect, AL_EFFECT_TYPE, AL_EFFECT_ECHO);
             alEffecti(normalReverbEffect, AL_EFFECT_TYPE, AL_EFFECT_REVERB);
-
-
-            EXTEfx.alAuxiliaryEffectSloti(reverbSlot, EXTEfx.AL_EFFECTSLOT_AUXILIARY_SEND_AUTO, AL11.AL_TRUE);
-
 
             //Set up the reverb effect
             EXTEfx.alEffectf(normalReverbEffect, AL_REVERB_DENSITY, 1.0f);
@@ -117,50 +112,6 @@ public class SoundEffects {
             EXTEfx.alEffectf(normalReverbEffect, AL_REVERB_LATE_REVERB_DELAY, 0.1f);
 
 
-
- /*           //EXTEfx.alEffectf
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_DENSITY, 1);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_DIFFUSION, 1);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_GAIN, 1F);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_GAINHF,1F);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_DECAY_TIME, 5F);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_DECAY_HFRATIO, 2F);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_REFLECTIONS_GAIN, 3.16F);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_LATE_REVERB_GAIN, 10F);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_LATE_REVERB_DELAY, 0.1F);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_AIR_ABSORPTION_GAINHF, 1F);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_ROOM_ROLLOFF_FACTOR, 10F);
-*/
-
-            /*Set these values to the max values for each effect:
-            Version Parameter Name Units Range Default
-1.0 AL_EAXREVERB_DENSITY [0.0, 1.0] 1.0
-1.0 AL_EAXREVERB_DIFFUSION [0.0, 1.0] 1.0
-1.0 AL_EAXREVERB_GAIN [0.0, 1.0] 0.32
-1.0 AL_EAXREVERB_GAINHF [0.0, 1.0] 0.89
-1.0 AL_EAXREVERB_GAINLF [0.0, 1.0] 0.0
-1.0 AL_EAXREVERB_DECAY_TIME Seconds [0.1, 20] 1.49
-1.0 AL_EAXREVERB_DECAY_HFRATIO [0.1, 2.0] 0.83
-1.0 AL_EAXREVERB_DECAY_LFRATIO [0.1, 2.0] 1.0
-1.0 AL_EAXREVERB_REFLECTIONS_GAIN [0.0, 3.16] 0.05
-1.0 AL_EAXREVERB_REFLECTIONS_DELAY Seconds [0.0, 0.3] 0.007
-1.0 AL_EAXREVERB_REFLECTIONS_PAN Vector [[-1.0, -1.0, -1.0],
-[1.0, 1.0, 1.0]] [0.0, 0.0, 0.0]
-1.0 AL_EAXREVERB_LATE_REVERB_GAIN [0.0, 10.0] 1.26
-1.0 AL_EAXREVERB_LATE_REVERB_DELAY Seconds [0.0, 0.1] 0.011
-1.0 AL_EAXREVERB_LATE_REVERB_PAN Vector [[-1.0, -1.0, -1.0],
-[1.0, 1.0, 1.0]] [0.0, 0.0, 0.0]
-1.0 AL_EAXREVERB_ECHO_TIME [0.075, 0.25] 0.25
-1.0 AL_EAXREVERB_ECHO_DEPTH [0.0, 1.0] 0.0
-1.0 AL_EAXREVERB_MODULATION_TIME [0.04, 4.0] 0.25
-1.0 AL_EAXREVERB_MODULATION_DEPTH [0.0, 1.0] 0.0
-1.0 AL_EAXREVERB_AIR_ABSORPTION_GAINHF [0.892,1.0] 0.994
-1.0 AL_EAXREVERB_HFREFERENCE Hz [1000.0 20000.0] 5000.0
-1.0 AL_EAXREVERB_LFREFERENCE Hz [20.0, 1000.0] 250.0
-1.0 AL_EAXREVERB_ROOM_ROLLOFF_FACTOR [0.0. 10.0] 0.0
-1.0 AL_EAXREVERB_DECAYHF_LIMIT ON / OFF [AL_FALSE,
-AL_TRUE] AL_TRUE
-             */
             EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_DENSITY, 1.0f);
             EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_DIFFUSION, 1.0f);
             EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_GAIN, 1.0f);
@@ -186,10 +137,8 @@ AL_TRUE] AL_TRUE
             EXTEfx.alEffectf(echoEffect, AL_ECHO_LRDELAY, 0.1f); // Adjust left/right delay for stereo effect
             EXTEfx.alEffectf(echoEffect, AL_ECHO_DAMPING, 0.5f); // Adjust damping for the echo effect
 
-            EXTEfx.alAuxiliaryEffectSloti(reverbSlot, AL_EFFECTSLOT_EFFECT, reverbEffect);
-            logALError("Set environment reverb effect:");
+            alAuxiliaryEffectSloti(reverbSlot, AL_EFFECTSLOT_EFFECT, reverbEffect);
             alAuxiliaryEffectSloti(echoSlot, AL_EFFECTSLOT_EFFECT, echoEffect);
-
             alAuxiliaryEffectSloti(normalReverbSlot, AL_EFFECTSLOT_EFFECT, normalReverbEffect);
 
 
@@ -197,36 +146,38 @@ AL_TRUE] AL_TRUE
         }
 
         alSource3i(sourceID, AL_AUXILIARY_SEND_FILTER, reverbSlot, 0, AL_FILTER_NULL);
-        logALError("Set environment filter0:");
         alSource3i(sourceID, AL_AUXILIARY_SEND_FILTER, echoSlot, 1, AL_FILTER_NULL);
-        alSource3i(sourceID, AL_AUXILIARY_SEND_FILTER, normalReverbSlot, 0, AL_FILTER_NULL);
-        logALError("Set environment filter1:");
+        alSource3i(sourceID, AL_AUXILIARY_SEND_FILTER, normalReverbSlot, 2, AL_FILTER_NULL);
 
     }
+
 
     private void setupEFX() {
         for (int i = 0; i < 4; i++) {
             auxFXSlots[i] = EXTEfx.alGenAuxiliaryEffectSlots();
-            EXTEfx.alAuxiliaryEffectSloti(auxFXSlots[i], EXTEfx.AL_EFFECTSLOT_AUXILIARY_SEND_AUTO, AL11.AL_TRUE);
+         //   EXTEfx.alAuxiliaryEffectSloti(auxFXSlots[i], EXTEfx.AL_EFFECTSLOT_AUXILIARY_SEND_AUTO, AL11.AL_TRUE);
         }
 
         for (int i = 0; i < 4; i++) {
             int reverbSlot = EXTEfx.alGenEffects();
             reverbs[i] = reverbSlot;
-            EXTEfx.alEffecti(reverbSlot, EXTEfx.AL_EFFECT_TYPE, EXTEfx.AL_EFFECT_EAXREVERB);
-            ReverbParams params = ReverbParams.getReverbParamsExtreme(i);
-            EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_DENSITY, params.density);
-            EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_DIFFUSION, params.diffusion);
-            EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_GAIN, params.gain);
-            EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_GAINHF, params.gainHF);
-            EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_DECAY_TIME, params.decayTime);
-            EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_DECAY_HFRATIO, params.decayHFRatio);
-            EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_REFLECTIONS_GAIN, params.reflectionsGain);
-            EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_LATE_REVERB_GAIN, params.lateReverbGain);
-            EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_LATE_REVERB_DELAY, params.lateReverbDelay);
-            EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_AIR_ABSORPTION_GAINHF, params.airAbsorptionGainHF);
-            EXTEfx.alEffectf(reverbSlot, EXTEfx.AL_EAXREVERB_ROOM_ROLLOFF_FACTOR, params.roomRolloffFactor);
+            EXTEfx.alEffecti(reverbSlot, EXTEfx.AL_EFFECT_TYPE, AL_EFFECT_EAXREVERB);
+            ReverbParams params = ReverbParams.getReverbParams(i);
+
+            EXTEfx.alEffectf(reverbSlot, AL_EAXREVERB_DENSITY, params.density);
+            EXTEfx.alEffectf(reverbSlot, AL_EAXREVERB_DIFFUSION, params.diffusion);
+            EXTEfx.alEffectf(reverbSlot, AL_EAXREVERB_GAIN, params.gain);
+            EXTEfx.alEffectf(reverbSlot, AL_EAXREVERB_GAINHF, params.gainHF);
+            EXTEfx.alEffectf(reverbSlot, AL_EAXREVERB_DECAY_TIME, params.decayTime);
+            EXTEfx.alEffectf(reverbSlot, AL_EAXREVERB_DECAY_HFRATIO, params.decayHFRatio);
+            EXTEfx.alEffectf(reverbSlot, AL_EAXREVERB_REFLECTIONS_GAIN, params.reflectionsGain);
+            EXTEfx.alEffectf(reverbSlot, AL_EAXREVERB_LATE_REVERB_GAIN, params.lateReverbGain);
+            EXTEfx.alEffectf(reverbSlot, AL_EAXREVERB_LATE_REVERB_DELAY, params.lateReverbDelay);
+            EXTEfx.alEffectf(reverbSlot, AL_EAXREVERB_AIR_ABSORPTION_GAINHF, params.airAbsorptionGainHF);
+           // EXTEfx.alEffectf(reverbSlot, AL_REVERB_ROOM_ROLLOFF_FACTOR, params.roomRolloffFactor);
+
             EXTEfx.alAuxiliaryEffectSloti(auxFXSlots[i], EXTEfx.AL_EFFECTSLOT_EFFECT, reverbSlot);
+
         }
         directFilter = EXTEfx.alGenFilters();
         EXTEfx.alFilteri(directFilter, EXTEfx.AL_FILTER_TYPE, EXTEfx.AL_FILTER_LOWPASS);
@@ -244,8 +195,6 @@ AL_TRUE] AL_TRUE
         // Set reverb send filter values and set source to send to all reverb fx slots
 
         //Log info about which parameters this method was called with
-        Loggers.log("Set environment: sendGain0: {}, sendGain1: {}, sendGain2: {}, sendGain3: {}, sendCutoff0: {}, sendCutoff1: {}, sendCutoff2: {}, sendCutoff3: {}, directCutoff: {}, directGain: {}", sendGain0, sendGain1, sendGain2, sendGain3, sendCutoff0, sendCutoff1, sendCutoff2, sendCutoff3, directCutoff, directGain);
-        Loggers.log("Max aux sends " + maxAuxSends);
 
         if (maxAuxSends >= 4) {
             EXTEfx.alFilterf(sendFilters[0], EXTEfx.AL_LOWPASS_GAIN, sendGain0);
