@@ -75,6 +75,53 @@ public class ReverbParams {
     }
 
 
+    public static ReverbParams getReverbParamsExtreme(int id){
+        ReverbParams r = new ReverbParams();
+        switch (id){
+            case 0:
+                r.lateReverbDelay = 0.1F;
+                break;
+            case 1:
+                r.lateReverbDelay = 0.011F;
+                break;
+            case 2, 3:
+                r.lateReverbDelay = 0.021F;
+                break;
+        }
+
+        //Maximize all parameters for extreme effect
+        r.decayTime = 5.0f;
+        r.density = 1.0f;
+        r.diffusion = 1.0f;
+        r.gain = 1.0f;
+        r.gainHF = 1.0f;
+        r.decayHFRatio = 2f;
+        r.reflectionsGain = 3.16f;
+        r.roomRolloffFactor = 10.0f;
+
+
+        r.airAbsorptionGainHF = 0.994F;
+
+        return r;
+    }
+
+    /*
+              ReverbParams params = new ReverbParams();
+
+            //Maximize all parameters for extreme effect
+            r.decayTime = 5.0f;
+            r.density = 1.0f;
+            r.diffusion = 1.0f;
+            r.gain = 1.0f;
+            r.gainHF = 1.0f;
+            r.decayHFRatio = 2f;
+            r.reflectionsGain = 3.16f;
+            r.lateReverbDelay = 0.1f;
+            r.airAbsorptionGainHF = 0.994F;
+            r.roomRolloffFactor = 10.0f;
+     */
+
+
 
     private static float globalReverbMultiplier() {
         return 0.7F * VowCloud.CONFIG.reverbGain.get();
