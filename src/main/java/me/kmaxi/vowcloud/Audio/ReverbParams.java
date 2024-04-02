@@ -30,6 +30,7 @@ public class ReverbParams {
                 r.reflectionsDelay = 0.001F;
                 r.lateReverbDelay = 0.011F;
                 r.roomRolloffFactor = 0.16F * VowCloud.CONFIG.attenuationFactor.get();
+                break;
             case 1:
                 r.decayTime = 0.55F;
                 r.density = 0F;
@@ -41,6 +42,7 @@ public class ReverbParams {
                 r.reflectionsDelay = 0.015F;
                 r.lateReverbDelay = 0.011F;
                 r.roomRolloffFactor = 0.15F * VowCloud.CONFIG.attenuationFactor.get();
+                break;
             case 2:
                 r.decayTime = 1.68F;
                 r.density = 0.1F;
@@ -52,6 +54,7 @@ public class ReverbParams {
                 r.reflectionsDelay = 0.021F;
                 r.lateReverbDelay = 0.021F;
                 r.roomRolloffFactor = 0.13F * VowCloud.CONFIG.attenuationFactor.get();
+                break;
             case 3:
                 r.decayTime = 4.142F;
                 r.density = 0.5F;
@@ -64,6 +67,7 @@ public class ReverbParams {
                 r.lateReverbDelay = 0.021F;
 
                 r.roomRolloffFactor = 0.11F * VowCloud.CONFIG.attenuationFactor.get();
+                break;
         }
 
         r.lateReverbGain = 1.26F;

@@ -18,8 +18,6 @@ import org.lwjgl.openal.AL11;
 import org.lwjgl.openal.ALC10;
 import org.lwjgl.openal.EXTEfx;
 
-import java.util.regex.Pattern;
-
 import static me.kmaxi.vowcloud.Loggers.logALError;
 import static org.lwjgl.openal.AL11.alSource3i;
 import static org.lwjgl.openal.EXTEfx.*;
@@ -39,13 +37,11 @@ public class SoundEffects {
     private int[] sendFilters = new int[4];
 
     private Minecraft mc;
-
-    private static final Pattern BLOCK_PATTERN = Pattern.compile(".*block..*");
-
-
     public SoundEffects(int sourceId) {
 
         mc = Minecraft.getInstance();
+        this.sourceID = sourceId;
+
         long currentContext = ALC10.alcGetCurrentContext();
         long currentDevice = ALC10.alcGetContextsDevice(currentContext);
 
@@ -59,103 +55,16 @@ public class SoundEffects {
         this.maxAuxSends = ALC10.alcGetInteger(currentDevice, EXTEfx.ALC_MAX_AUXILIARY_SENDS);
         Loggers.log("Max auxiliary sends: " + maxAuxSends);
 
-        this.sourceID = sourceId;
 
         setupEFX();
-
-      //  setEcho();
-
-
-
-
-/*        alSource3i(sourceId, AL_AUXILIARY_SEND_FILTER, auxFXSlots[0], 0, AL_FILTER_NULL);
-        alSource3i(sourceId, AL_AUXILIARY_SEND_FILTER, auxFXSlots[1], 1, AL_FILTER_NULL);
-        alSource3i(sourceId, AL_AUXILIARY_SEND_FILTER, auxFXSlots[2], 2, AL_FILTER_NULL);
-        alSource3i(sourceId, AL_AUXILIARY_SEND_FILTER, auxFXSlots[3], 3, AL_FILTER_NULL);*/
     }
 
-    private int echoSlot;
-    private int reverbSlot;
-    private int echoEffect;
-    private int reverbEffect;
-    private int normalReverbSlot;
-    private int normalReverbEffect;
-
-
-    private boolean hasSetUp;
-
-
-    public void setEcho() {
-
-        if (!hasSetUp) {
-            reverbSlot = alGenAuxiliaryEffectSlots();
-            echoSlot = alGenAuxiliaryEffectSlots();
-            normalReverbSlot = alGenAuxiliaryEffectSlots();
-            reverbEffect = alGenEffects();
-            echoEffect = alGenEffects();
-            normalReverbEffect = alGenEffects();
-
-            // Set up the effect parameters, for example, reverb
-            alEffecti(reverbEffect, AL_EFFECT_TYPE, AL_EFFECT_EAXREVERB);
-            alEffecti(echoEffect, AL_EFFECT_TYPE, AL_EFFECT_ECHO);
-            alEffecti(normalReverbEffect, AL_EFFECT_TYPE, AL_EFFECT_REVERB);
-
-            //Set up the reverb effect
-            EXTEfx.alEffectf(normalReverbEffect, AL_REVERB_DENSITY, 1.0f);
-            EXTEfx.alEffectf(normalReverbEffect, AL_REVERB_DIFFUSION, 1.0f);
-            EXTEfx.alEffectf(normalReverbEffect, AL_REVERB_GAIN, 1.0f);
-            EXTEfx.alEffectf(normalReverbEffect, AL_REVERB_GAINHF, 1.0f);
-            EXTEfx.alEffectf(normalReverbEffect, AL_REVERB_DECAY_TIME, 5f);
-            EXTEfx.alEffectf(normalReverbEffect, AL_REVERB_DECAY_HFRATIO, 1f);
-            EXTEfx.alEffectf(normalReverbEffect, AL_REVERB_REFLECTIONS_GAIN, 5f);
-            EXTEfx.alEffectf(normalReverbEffect, AL_REVERB_LATE_REVERB_GAIN, 6f);
-            EXTEfx.alEffectf(normalReverbEffect, AL_REVERB_LATE_REVERB_DELAY, 0.1f);
-
-
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_DENSITY, 1.0f);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_DIFFUSION, 1.0f);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_GAIN, 1.0f);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_GAINHF, 1.0f);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_DECAY_TIME, 20.0f);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_DECAY_HFRATIO, 2.0f);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_DECAY_LFRATIO, 2.0f);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_REFLECTIONS_GAIN, 3.16f);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_REFLECTIONS_DELAY, 0.3f);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_LATE_REVERB_GAIN, 10.0f);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_LATE_REVERB_DELAY, 0.1f);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_ECHO_TIME, 0.25f);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_ECHO_DEPTH, 1.0f);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_MODULATION_TIME, 4.0f);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_MODULATION_DEPTH, 1.0f);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_AIR_ABSORPTION_GAINHF, 1.0f);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_HFREFERENCE, 20000.0f);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_LFREFERENCE, 1000.0f);
-            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_ROOM_ROLLOFF_FACTOR, 10.0f);
-
-
-            EXTEfx.alEffectf(echoEffect, AL_ECHO_DELAY, 0.1f); // Adjust delay for the desired echo effect
-            EXTEfx.alEffectf(echoEffect, AL_ECHO_LRDELAY, 0.1f); // Adjust left/right delay for stereo effect
-            EXTEfx.alEffectf(echoEffect, AL_ECHO_DAMPING, 0.5f); // Adjust damping for the echo effect
-
-            alAuxiliaryEffectSloti(reverbSlot, AL_EFFECTSLOT_EFFECT, reverbEffect);
-            alAuxiliaryEffectSloti(echoSlot, AL_EFFECTSLOT_EFFECT, echoEffect);
-            alAuxiliaryEffectSloti(normalReverbSlot, AL_EFFECTSLOT_EFFECT, normalReverbEffect);
-
-
-            hasSetUp = true;
-        }
-
-        alSource3i(sourceID, AL_AUXILIARY_SEND_FILTER, reverbSlot, 0, AL_FILTER_NULL);
-        alSource3i(sourceID, AL_AUXILIARY_SEND_FILTER, echoSlot, 1, AL_FILTER_NULL);
-        alSource3i(sourceID, AL_AUXILIARY_SEND_FILTER, normalReverbSlot, 2, AL_FILTER_NULL);
-
-    }
 
 
     private void setupEFX() {
         for (int i = 0; i < 4; i++) {
             auxFXSlots[i] = EXTEfx.alGenAuxiliaryEffectSlots();
-         //   EXTEfx.alAuxiliaryEffectSloti(auxFXSlots[i], EXTEfx.AL_EFFECTSLOT_AUXILIARY_SEND_AUTO, AL11.AL_TRUE);
+            //   EXTEfx.alAuxiliaryEffectSloti(auxFXSlots[i], EXTEfx.AL_EFFECTSLOT_AUXILIARY_SEND_AUTO, AL11.AL_TRUE);
         }
 
         for (int i = 0; i < 4; i++) {
@@ -174,7 +83,8 @@ public class SoundEffects {
             EXTEfx.alEffectf(reverbSlot, AL_EAXREVERB_LATE_REVERB_GAIN, params.lateReverbGain);
             EXTEfx.alEffectf(reverbSlot, AL_EAXREVERB_LATE_REVERB_DELAY, params.lateReverbDelay);
             EXTEfx.alEffectf(reverbSlot, AL_EAXREVERB_AIR_ABSORPTION_GAINHF, params.airAbsorptionGainHF);
-           // EXTEfx.alEffectf(reverbSlot, AL_REVERB_ROOM_ROLLOFF_FACTOR, params.roomRolloffFactor);
+             EXTEfx.alEffectf(reverbSlot, AL_REVERB_ROOM_ROLLOFF_FACTOR, 1);
+             Loggers.log("RollOff factor: " + params.roomRolloffFactor  +" for reverb " + i);
 
             EXTEfx.alAuxiliaryEffectSloti(auxFXSlots[i], EXTEfx.AL_EFFECTSLOT_EFFECT, reverbSlot);
 
@@ -188,13 +98,13 @@ public class SoundEffects {
         }
     }
 
-    public void setEnvironment(int sourceID, float sendGain0, float sendGain1, float sendGain2, float sendGain3, float sendCutoff0, float sendCutoff1, float sendCutoff2, float sendCutoff3, float directCutoff, float directGain) {
+    public void setEffects(int sourceID,
+                           float sendGain0, float sendGain1, float sendGain2, float sendGain3,
+                           float sendCutoff0, float sendCutoff1, float sendCutoff2, float sendCutoff3,
+                           float directCutoff, float directGain) {
         if (!VowCloud.CONFIG.reverbEnabled.get()) {
             return;
         }
-        // Set reverb send filter values and set source to send to all reverb fx slots
-
-        //Log info about which parameters this method was called with
 
         if (maxAuxSends >= 4) {
             EXTEfx.alFilterf(sendFilters[0], EXTEfx.AL_LOWPASS_GAIN, sendGain0);
@@ -233,11 +143,10 @@ public class SoundEffects {
         logALError("Set environment airAbsorption:");
     }
 
-    @Nullable
-    public Vec3 evaluateEnvironment(int sourceID, double posX, double posY, double posZ, boolean auxOnly) {
+    public void evaluateEnvironment(int sourceID, double posX, double posY, double posZ) {
         if (mc.player == null || mc.level == null || (posX == 0D && posY == 0D && posZ == 0D)) {
-            setDefaultEnvironment(sourceID, auxOnly);
-            return null;
+            setEffects(sourceID, 0F, 0F, 0F, 0F, 1F, 1F, 1F, 1F, 1F, 1F);
+            return;
         }
 
         float directCutoff;
@@ -246,16 +155,13 @@ public class SoundEffects {
         //Direct sound occlusion
         Vec3 playerPos = mc.gameRenderer.getMainCamera().getPosition();
         Vec3 soundPos = new Vec3(posX, posY, posZ);
-        Vec3 normalToPlayer = playerPos.subtract(soundPos).normalize();
 
         BlockPos soundBlockPos = new BlockPos((int) soundPos.x, (int) soundPos.y, (int) soundPos.z);
-
-        Loggers.log("Player pos: {}, {}, {} \tSound Pos: {}, {}, {} \tTo player vector: {}, {}, {}", playerPos.x, playerPos.y, playerPos.z, soundPos.x, soundPos.y, soundPos.z, normalToPlayer.x, normalToPlayer.y, normalToPlayer.z);
 
         double occlusionAccumulation = calculateOcclusion(soundPos, playerPos);
 
         directCutoff = (float) Math.exp(-occlusionAccumulation * absorptionCoeff);
-        float directGain = auxOnly ? 0F : (float) Math.pow(directCutoff, 0.1D);
+        float directGain = (float) Math.pow(directCutoff, 0.1D);
 
         Loggers.log("Direct cutoff: {}, direct gain: {}", directCutoff, directGain);
 
@@ -265,10 +171,10 @@ public class SoundEffects {
         float sendGain2 = 0F;
         float sendGain3 = 0F;
 
-        float sendCutoff0 = 1F;
-        float sendCutoff1 = 1F;
-        float sendCutoff2 = 1F;
-        float sendCutoff3 = 1F;
+        float sendCutoff0;
+        float sendCutoff1;
+        float sendCutoff2;
+        float sendCutoff3;
 
         if (mc.player.isUnderWater()) {
             directCutoff *= 1F - VowCloud.CONFIG.underwaterFilter.get();
@@ -406,7 +312,7 @@ public class SoundEffects {
         float averageSharedAirspace = (sharedAirspaceWeight0 + sharedAirspaceWeight1 + sharedAirspaceWeight2 + sharedAirspaceWeight3) * 0.25F;
         directCutoff = Math.max((float) Math.pow(averageSharedAirspace, 0.5D) * 0.2F, directCutoff);
 
-        directGain = auxOnly ? 0F : (float) Math.pow(directCutoff, 0.1D);
+        directGain = (float) Math.pow(directCutoff, 0.1D);
 
         sendGain1 *= bounceReflectivityRatio[1];
         if (bounceReflectivityRatio.length > 2) {
@@ -434,8 +340,7 @@ public class SoundEffects {
             sendCutoff2 *= 0.4F;
             sendCutoff3 *= 0.4F;
         }
-        setEnvironment(sourceID, sendGain0, sendGain1, sendGain2, sendGain3, sendCutoff0, sendCutoff1, sendCutoff2, sendCutoff3, directCutoff, directGain);
-        return newSoundPos;
+        setEffects(sourceID, sendGain0, sendGain1, sendGain2, sendGain3, sendCutoff0, sendCutoff1, sendCutoff2, sendCutoff3, directCutoff, directGain);
     }
 
     private double calculateOcclusion(Vec3 soundPos, Vec3 playerPos) {
@@ -534,13 +439,6 @@ public class SoundEffects {
         return null;
     }
 
-    public void setDefaultEnvironment(int sourceID) {
-        setDefaultEnvironment(sourceID, false);
-    }
-
-    public void setDefaultEnvironment(int sourceID, boolean auxOnly) {
-        setEnvironment(sourceID, 0F, 0F, 0F, 0F, 1F, 1F, 1F, 1F, 1F, auxOnly ? 0F : 1F);
-    }
 
     public BlockHitResult raycast(Vec3 start, Vec3 end, @Nullable BlockPos ignore) {
         if (mc.level == null) {
@@ -571,6 +469,80 @@ public class SoundEffects {
         double z = dir.z - dot * normal.z;
 
         return new Vec3(x, y, z);
+    }
+
+
+    private int echoSlot;
+    private int reverbSlot;
+    private int echoEffect;
+    private int reverbEffect;
+    private int normalReverbSlot;
+    private int normalReverbEffect;
+    private boolean hasSetUp;
+    public void setEcho() {
+
+        if (!hasSetUp) {
+            reverbSlot = alGenAuxiliaryEffectSlots();
+            echoSlot = alGenAuxiliaryEffectSlots();
+            normalReverbSlot = alGenAuxiliaryEffectSlots();
+            reverbEffect = alGenEffects();
+            echoEffect = alGenEffects();
+            normalReverbEffect = alGenEffects();
+
+            // Set up the effect parameters, for example, reverb
+            alEffecti(reverbEffect, AL_EFFECT_TYPE, AL_EFFECT_EAXREVERB);
+            alEffecti(echoEffect, AL_EFFECT_TYPE, AL_EFFECT_ECHO);
+            alEffecti(normalReverbEffect, AL_EFFECT_TYPE, AL_EFFECT_REVERB);
+
+            //Set up the reverb effect
+            EXTEfx.alEffectf(normalReverbEffect, AL_REVERB_DENSITY, 1.0f);
+            EXTEfx.alEffectf(normalReverbEffect, AL_REVERB_DIFFUSION, 1.0f);
+            EXTEfx.alEffectf(normalReverbEffect, AL_REVERB_GAIN, 1.0f);
+            EXTEfx.alEffectf(normalReverbEffect, AL_REVERB_GAINHF, 1.0f);
+            EXTEfx.alEffectf(normalReverbEffect, AL_REVERB_DECAY_TIME, 5f);
+            EXTEfx.alEffectf(normalReverbEffect, AL_REVERB_DECAY_HFRATIO, 1f);
+            EXTEfx.alEffectf(normalReverbEffect, AL_REVERB_REFLECTIONS_GAIN, 5f);
+            EXTEfx.alEffectf(normalReverbEffect, AL_REVERB_LATE_REVERB_GAIN, 6f);
+            EXTEfx.alEffectf(normalReverbEffect, AL_REVERB_LATE_REVERB_DELAY, 0.1f);
+
+
+            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_DENSITY, 1.0f);
+            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_DIFFUSION, 1.0f);
+            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_GAIN, 1.0f);
+            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_GAINHF, 1.0f);
+            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_DECAY_TIME, 20.0f);
+            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_DECAY_HFRATIO, 2.0f);
+            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_DECAY_LFRATIO, 2.0f);
+            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_REFLECTIONS_GAIN, 3.16f);
+            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_REFLECTIONS_DELAY, 0.3f);
+            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_LATE_REVERB_GAIN, 10.0f);
+            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_LATE_REVERB_DELAY, 0.1f);
+            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_ECHO_TIME, 0.25f);
+            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_ECHO_DEPTH, 1.0f);
+            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_MODULATION_TIME, 4.0f);
+            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_MODULATION_DEPTH, 1.0f);
+            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_AIR_ABSORPTION_GAINHF, 1.0f);
+            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_HFREFERENCE, 20000.0f);
+            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_LFREFERENCE, 1000.0f);
+            EXTEfx.alEffectf(reverbEffect, EXTEfx.AL_EAXREVERB_ROOM_ROLLOFF_FACTOR, 10.0f);
+
+
+            EXTEfx.alEffectf(echoEffect, AL_ECHO_DELAY, 0.1f); // Adjust delay for the desired echo effect
+            EXTEfx.alEffectf(echoEffect, AL_ECHO_LRDELAY, 0.1f); // Adjust left/right delay for stereo effect
+            EXTEfx.alEffectf(echoEffect, AL_ECHO_DAMPING, 0.5f); // Adjust damping for the echo effect
+
+            alAuxiliaryEffectSloti(reverbSlot, AL_EFFECTSLOT_EFFECT, reverbEffect);
+            alAuxiliaryEffectSloti(echoSlot, AL_EFFECTSLOT_EFFECT, echoEffect);
+            alAuxiliaryEffectSloti(normalReverbSlot, AL_EFFECTSLOT_EFFECT, normalReverbEffect);
+
+
+            hasSetUp = true;
+        }
+
+        alSource3i(sourceID, AL_AUXILIARY_SEND_FILTER, reverbSlot, 0, AL_FILTER_NULL);
+        alSource3i(sourceID, AL_AUXILIARY_SEND_FILTER, echoSlot, 1, AL_FILTER_NULL);
+        alSource3i(sourceID, AL_AUXILIARY_SEND_FILTER, normalReverbSlot, 2, AL_FILTER_NULL);
+
     }
 
 

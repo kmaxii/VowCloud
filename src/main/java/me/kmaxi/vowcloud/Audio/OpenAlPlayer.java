@@ -9,9 +9,6 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static org.lwjgl.openal.AL11.alSource3i;
-import static org.lwjgl.openal.EXTEfx.*;
-
 
 public class OpenAlPlayer {
     private int sourceID;
@@ -156,7 +153,7 @@ public class OpenAlPlayer {
 
             AL11.alSource3f(sourceID, AL11.AL_POSITION, (float) pos.x, (float) pos.y, (float) pos.z);
 
-           soundEffects.evaluateEnvironment(sourceID, pos.x, pos.y, pos.z, false);
+           soundEffects.evaluateEnvironment(sourceID, pos.x, pos.y, pos.z);
         },  () -> {
 
             AL11.alSourcei(sourceID, AL11.AL_SOURCE_RELATIVE, AL11.AL_TRUE);

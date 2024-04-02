@@ -13,7 +13,8 @@
     "MixinShowGuiListener",
     "SneakPacketMixin",
     "SoundEngineStartedMixin",
-    "LibraryMixin"
+    "LibraryMixin",
+    "DebugRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
