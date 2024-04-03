@@ -9,6 +9,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
@@ -111,6 +112,10 @@ public abstract class BlockSoundConfigBase extends CommentedPropertyConfig {
     }
 
     public float getBlockDefinitionValue(BlockState blockState) {
+        if (blockState.getBlock() == Blocks.BARRIER){
+            return 0;
+        }
+
         Float value = getBlocks().get(blockState.getBlock());
         if (value != null) {
             return value;
