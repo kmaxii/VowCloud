@@ -34,9 +34,26 @@ public class SoundEffects {
 
     private int directFilter;
 
-    private int[] sendFilters = new int[4];
 
     private Minecraft mc;
+
+    private int[] sendFilters = new int[4];
+
+
+    private final float[] sendGains = new float[4];
+    private final float[] sendCutoffs = new float[4];
+
+    /*
+    * Adjusts the cutoff frequency of the low-pass filter. Min: 0.0, Max: 1.0
+     */
+    private float hfCutoff = 1f;
+
+    /*
+    * Adjusts the volume of the sound. Min: 0.0, Max: 1.0
+     */
+    private float gain = 1f;
+
+
     public SoundEffects(int sourceId) {
 
         mc = Minecraft.getInstance();
@@ -60,11 +77,9 @@ public class SoundEffects {
     }
 
 
-
     private void setupEFX() {
         for (int i = 0; i < 4; i++) {
             auxFXSlots[i] = EXTEfx.alGenAuxiliaryEffectSlots();
-            //   EXTEfx.alAuxiliaryEffectSloti(auxFXSlots[i], EXTEfx.AL_EFFECTSLOT_AUXILIARY_SEND_AUTO, AL11.AL_TRUE);
         }
 
         for (int i = 0; i < 4; i++) {
@@ -83,8 +98,7 @@ public class SoundEffects {
             EXTEfx.alEffectf(reverbSlot, AL_EAXREVERB_LATE_REVERB_GAIN, params.lateReverbGain);
             EXTEfx.alEffectf(reverbSlot, AL_EAXREVERB_LATE_REVERB_DELAY, params.lateReverbDelay);
             EXTEfx.alEffectf(reverbSlot, AL_EAXREVERB_AIR_ABSORPTION_GAINHF, params.airAbsorptionGainHF);
-             EXTEfx.alEffectf(reverbSlot, AL_REVERB_ROOM_ROLLOFF_FACTOR, 1);
-             Loggers.log("RollOff factor: " + params.roomRolloffFactor  +" for reverb " + i);
+            EXTEfx.alEffectf(reverbSlot, AL_REVERB_ROOM_ROLLOFF_FACTOR, params.roomRolloffFactor);
 
             EXTEfx.alAuxiliaryEffectSloti(auxFXSlots[i], EXTEfx.AL_EFFECTSLOT_EFFECT, reverbSlot);
 
@@ -98,44 +112,17 @@ public class SoundEffects {
         }
     }
 
-    public void setEffects(int sourceID,
-                           float sendGain0, float sendGain1, float sendGain2, float sendGain3,
-                           float sendCutoff0, float sendCutoff1, float sendCutoff2, float sendCutoff3,
-                           float directCutoff, float directGain) {
+    public void applyEffects() {
         if (!VowCloud.CONFIG.reverbEnabled.get()) {
             return;
         }
 
-        if (maxAuxSends >= 4) {
-            EXTEfx.alFilterf(sendFilters[0], EXTEfx.AL_LOWPASS_GAIN, sendGain0);
-            EXTEfx.alFilterf(sendFilters[0], EXTEfx.AL_LOWPASS_GAINHF, sendCutoff0);
-            AL11.alSource3i(sourceID, EXTEfx.AL_AUXILIARY_SEND_FILTER, auxFXSlots[0], 3, sendFilters[0]);
-            logALError("Set environment filter0:");
+        for (int i = 0; i < Math.min(maxAuxSends, 4); i++) {
+            setFilter(i, 3 - i);
         }
 
-        if (maxAuxSends >= 3) {
-            EXTEfx.alFilterf(sendFilters[1], EXTEfx.AL_LOWPASS_GAIN, sendGain1);
-            EXTEfx.alFilterf(sendFilters[1], EXTEfx.AL_LOWPASS_GAINHF, sendCutoff1);
-            AL11.alSource3i(sourceID, EXTEfx.AL_AUXILIARY_SEND_FILTER, auxFXSlots[1], 2, auxFXSlots[1]);
-            logALError("Set environment filter1:");
-        }
-
-        if (maxAuxSends >= 2) {
-            EXTEfx.alFilterf(sendFilters[2], EXTEfx.AL_LOWPASS_GAIN, sendGain2);
-            EXTEfx.alFilterf(sendFilters[2], EXTEfx.AL_LOWPASS_GAINHF, sendCutoff2);
-            AL11.alSource3i(sourceID, EXTEfx.AL_AUXILIARY_SEND_FILTER, auxFXSlots[2], 1, sendFilters[2]);
-            logALError("Set environment filter2:");
-        }
-
-        if (maxAuxSends >= 1) {
-            EXTEfx.alFilterf(sendFilters[3], EXTEfx.AL_LOWPASS_GAIN, sendGain3);
-            EXTEfx.alFilterf(sendFilters[3], EXTEfx.AL_LOWPASS_GAINHF, sendCutoff3);
-            AL11.alSource3i(sourceID, EXTEfx.AL_AUXILIARY_SEND_FILTER, auxFXSlots[3], 0, sendFilters[3]);
-            logALError("Set environment filter3:");
-        }
-
-        EXTEfx.alFilterf(directFilter, EXTEfx.AL_LOWPASS_GAIN, directGain);
-        EXTEfx.alFilterf(directFilter, EXTEfx.AL_LOWPASS_GAINHF, directCutoff);
+        EXTEfx.alFilterf(directFilter, EXTEfx.AL_LOWPASS_GAIN, gain);
+        EXTEfx.alFilterf(directFilter, EXTEfx.AL_LOWPASS_GAINHF, hfCutoff);
         AL11.alSourcei(sourceID, EXTEfx.AL_DIRECT_FILTER, directFilter);
         logALError("Set environment directFilter0:");
 
@@ -143,45 +130,48 @@ public class SoundEffects {
         logALError("Set environment airAbsorption:");
     }
 
-    public void evaluateEnvironment(int sourceID, double posX, double posY, double posZ) {
+    private void setFilter(int id, int auxSlot){
+        EXTEfx.alFilterf(sendFilters[id], EXTEfx.AL_LOWPASS_GAIN, sendGains[id]);
+        EXTEfx.alFilterf(sendFilters[id], EXTEfx.AL_LOWPASS_GAINHF, sendCutoffs[id]);
+        AL11.alSource3i(sourceID, EXTEfx.AL_AUXILIARY_SEND_FILTER, auxFXSlots[id], auxSlot, sendFilters[0]);
+        logALError("Set environment filter0:");
+    }
+
+    private void resetFilters(){
+        for (int i = 0; i < 4; i++) {
+            sendGains[i] = 0;
+            sendCutoffs[i] = 1;
+        }
+        gain = 1f;
+        hfCutoff = 1f;
+    }
+
+
+    public void evaluateEnvironment(double posX, double posY, double posZ) {
+
+        resetFilters();
         if (mc.player == null || mc.level == null || (posX == 0D && posY == 0D && posZ == 0D)) {
-            setEffects(sourceID, 0F, 0F, 0F, 0F, 1F, 1F, 1F, 1F, 1F, 1F);
+            applyEffects();
             return;
         }
 
-        float directCutoff;
         float absorptionCoeff = (float) (VowCloud.CONFIG.blockAbsorption.get() * 3D);
 
-        //Direct sound occlusion
         Vec3 playerPos = mc.gameRenderer.getMainCamera().getPosition();
         Vec3 soundPos = new Vec3(posX, posY, posZ);
-
         BlockPos soundBlockPos = new BlockPos((int) soundPos.x, (int) soundPos.y, (int) soundPos.z);
 
         double occlusionAccumulation = calculateOcclusion(soundPos, playerPos);
 
-        directCutoff = (float) Math.exp(-occlusionAccumulation * absorptionCoeff);
-        float directGain = (float) Math.pow(directCutoff, 0.1D);
-
-        Loggers.log("Direct cutoff: {}, direct gain: {}", directCutoff, directGain);
-
-        // Calculate reverb parameters for this sound
-        float sendGain0 = 0F;
-        float sendGain1 = 0F;
-        float sendGain2 = 0F;
-        float sendGain3 = 0F;
-
-        float sendCutoff0;
-        float sendCutoff1;
-        float sendCutoff2;
-        float sendCutoff3;
+        hfCutoff = (float) Math.exp(-occlusionAccumulation * absorptionCoeff);
+        gain = (float) Math.pow(hfCutoff, 0.1D);
 
         if (mc.player.isUnderWater()) {
-            directCutoff *= 1F - VowCloud.CONFIG.underwaterFilter.get();
+            hfCutoff *= 1F - VowCloud.CONFIG.underwaterFilter.get();
         }
 
         // Shoot rays around sound
-        float maxDistance = 256F;
+        float maxDistance = 30F;
 
         int numRays = VowCloud.CONFIG.environmentEvaluationRayCount.get();
         int rayBounces = VowCloud.CONFIG.environmentEvaluationRayBounces.get();
@@ -267,15 +257,16 @@ public class SoundEffects {
 
                     float reflectionDelay = (float) Math.max(totalRayDistance, 0D) * 0.12F * blockReflectivity;
 
-                    float cross0 = 1F - Mth.clamp(Math.abs(reflectionDelay - 0F), 0F, 1F);
-                    float cross1 = 1F - Mth.clamp(Math.abs(reflectionDelay - 1F), 0F, 1F);
-                    float cross2 = 1F - Mth.clamp(Math.abs(reflectionDelay - 2F), 0F, 1F);
-                    float cross3 = Mth.clamp(reflectionDelay - 2F, 0F, 1F);
+                    float[] cross = new float[]{1F - Mth.clamp(Math.abs(reflectionDelay - 0F), 0F, 1F),
+                            1F - Mth.clamp(Math.abs(reflectionDelay - 1F), 0F, 1F),
+                            1F - Mth.clamp(Math.abs(reflectionDelay - 2F), 0F, 1F),
+                            Mth.clamp(reflectionDelay - 2F, 0F, 1F)
+                    };
 
-                    sendGain0 += cross0 * energyTowardsPlayer * 6.4F * rcpTotalRays;
-                    sendGain1 += cross1 * energyTowardsPlayer * 12.8F * rcpTotalRays;
-                    sendGain2 += cross2 * energyTowardsPlayer * 12.8F * rcpTotalRays;
-                    sendGain3 += cross3 * energyTowardsPlayer * 12.8F * rcpTotalRays;
+                    sendGains[0] += cross[0] * energyTowardsPlayer * 6.4F * rcpTotalRays;
+                    for (int y = 1; y < 4; y++){
+                        sendGains[y] += cross[y] * energyTowardsPlayer * 12.8F * rcpTotalRays;
+                    }
 
                     // Nowhere to bounce off of, stop bouncing!
                     if (newRayHit.getType() == HitResult.Type.MISS) {
@@ -298,49 +289,46 @@ public class SoundEffects {
 
         Loggers.log("Shared airspace: {} ({})", sharedAirspace, audioDirection.getSharedAirspaces());
 
-        float sharedAirspaceWeight0 = Mth.clamp(sharedAirspace / 20F, 0F, 1F);
-        float sharedAirspaceWeight1 = Mth.clamp(sharedAirspace / 15F, 0F, 1F);
-        float sharedAirspaceWeight2 = Mth.clamp(sharedAirspace / 10F, 0F, 1F);
-        float sharedAirspaceWeight3 = Mth.clamp(sharedAirspace / 10F, 0F, 1F);
+        float[] sharedAirspaceWeights = new float[]{Mth.clamp(sharedAirspace / 20F, 0F, 1F),
+                Mth.clamp(sharedAirspace / 15F, 0F, 1F),
+                Mth.clamp(sharedAirspace / 10F, 0F, 1F),
+                Mth.clamp(sharedAirspace / 10F, 0F, 1F)};
 
-        sendCutoff0 = (float) Math.exp(-occlusionAccumulation * absorptionCoeff * 1F) * (1F - sharedAirspaceWeight0) + sharedAirspaceWeight0;
-        sendCutoff1 = (float) Math.exp(-occlusionAccumulation * absorptionCoeff * 1F) * (1F - sharedAirspaceWeight1) + sharedAirspaceWeight1;
-        sendCutoff2 = (float) Math.exp(-occlusionAccumulation * absorptionCoeff * 1F) * (1F - sharedAirspaceWeight2) + sharedAirspaceWeight2;
-        sendCutoff3 = (float) Math.exp(-occlusionAccumulation * absorptionCoeff * 1F) * (1F - sharedAirspaceWeight3) + sharedAirspaceWeight3;
+        for (int i = 0; i <4; i++ ){
+            sendCutoffs[i] = (float) Math.exp(-occlusionAccumulation * absorptionCoeff * 1F) * (1F - sharedAirspaceWeights[i]) + sharedAirspaceWeights[i];
+        }
+
 
         // Attempt to preserve directionality when airspace is shared by allowing some of the dry signal through but filtered
-        float averageSharedAirspace = (sharedAirspaceWeight0 + sharedAirspaceWeight1 + sharedAirspaceWeight2 + sharedAirspaceWeight3) * 0.25F;
-        directCutoff = Math.max((float) Math.pow(averageSharedAirspace, 0.5D) * 0.2F, directCutoff);
+        float averageSharedAirspace = (sharedAirspaceWeights[0] + sharedAirspaceWeights[1] + sharedAirspaceWeights[2] + sharedAirspaceWeights[3]) * 0.25F;
+        hfCutoff = Math.max((float) Math.pow(averageSharedAirspace, 0.5D) * 0.2F, hfCutoff);
 
-        directGain = (float) Math.pow(directCutoff, 0.1D);
+        gain = (float) Math.pow(hfCutoff, 0.1D);
 
-        sendGain1 *= bounceReflectivityRatio[1];
+        sendGains[1] *= bounceReflectivityRatio[1];
         if (bounceReflectivityRatio.length > 2) {
-            sendGain2 *= (float) Math.pow(bounceReflectivityRatio[2], 3D);
+            sendGains[2] *= (float) Math.pow(bounceReflectivityRatio[2], 3D);
         }
         if (bounceReflectivityRatio.length > 3) {
-            sendGain3 *= (float) Math.pow(bounceReflectivityRatio[3], 4D);
+            sendGains[3] *= (float) Math.pow(bounceReflectivityRatio[3], 4D);
         }
 
-        sendGain0 = Mth.clamp(sendGain0, 0F, 1F);
-        sendGain1 = Mth.clamp(sendGain1, 0F, 1F);
-        sendGain2 = Mth.clamp(sendGain2 * 1.05F - 0.05F, 0F, 1F);
-        sendGain3 = Mth.clamp(sendGain3 * 1.05F - 0.05F, 0F, 1F);
+        sendGains[0] = Mth.clamp(sendGains[0], 0F, 1F);
+        sendGains[1] = Mth.clamp(sendGains[1], 0F, 1F);
+        sendGains[2] = Mth.clamp(sendGains[2] * 1.05F - 0.05F, 0F, 1F);
+        sendGains[3] = Mth.clamp(sendGains[3] * 1.05F - 0.05F, 0F, 1F);
 
-        sendGain0 *= (float) Math.pow(sendCutoff0, 0.1D);
-        sendGain1 *= (float) Math.pow(sendCutoff1, 0.1D);
-        sendGain2 *= (float) Math.pow(sendCutoff2, 0.1D);
-        sendGain3 *= (float) Math.pow(sendCutoff3, 0.1D);
-
+        for (int i = 0; i <4; i++){
+            sendGains[i] = (float) Math.pow(sendCutoffs[i], 0.1D);
+        }
 
         assert mc.player != null;
         if (mc.player.isUnderWater()) {
-            sendCutoff0 *= 0.4F;
-            sendCutoff1 *= 0.4F;
-            sendCutoff2 *= 0.4F;
-            sendCutoff3 *= 0.4F;
+            for (int i = 0; i <4; i++){
+                sendCutoffs[i] *= 0.4F;
+            }
         }
-        setEffects(sourceID, sendGain0, sendGain1, sendGain2, sendGain3, sendCutoff0, sendCutoff1, sendCutoff2, sendCutoff3, directCutoff, directGain);
+        applyEffects();
     }
 
     private double calculateOcclusion(Vec3 soundPos, Vec3 playerPos) {
@@ -441,11 +429,13 @@ public class SoundEffects {
 
 
     public BlockHitResult raycast(Vec3 start, Vec3 end, @Nullable BlockPos ignore) {
-        if (mc.level == null) {
-            Vec3 dir = end.subtract(start);
-            return BlockHitResult.miss(end, Direction.getNearest(dir.x, dir.y, dir.z), new BlockPos((int) end.x, (int) end.y, (int) end.z));
+
+        if (mc.level != null) {
+            return mc.level.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.SOURCE_ONLY, mc.player));
         }
-        return mc.level.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.SOURCE_ONLY, mc.player));
+
+        Vec3 dir = end.subtract(start);
+        return BlockHitResult.miss(end, Direction.getNearest(dir.x, dir.y, dir.z), new BlockPos((int) end.x, (int) end.y, (int) end.z));
     }
 
     private static void setSoundPos(int sourceID, Vec3 pos) {
@@ -479,6 +469,7 @@ public class SoundEffects {
     private int normalReverbSlot;
     private int normalReverbEffect;
     private boolean hasSetUp;
+
     public void setEcho() {
 
         if (!hasSetUp) {

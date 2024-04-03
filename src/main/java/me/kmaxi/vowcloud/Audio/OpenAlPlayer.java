@@ -153,7 +153,7 @@ public class OpenAlPlayer {
 
             AL11.alSource3f(sourceID, AL11.AL_POSITION, (float) pos.x, (float) pos.y, (float) pos.z);
 
-           soundEffects.evaluateEnvironment(sourceID, pos.x, pos.y, pos.z);
+           soundEffects.evaluateEnvironment(pos.x, pos.y, pos.z);
         },  () -> {
 
             AL11.alSourcei(sourceID, AL11.AL_SOURCE_RELATIVE, AL11.AL_TRUE);
