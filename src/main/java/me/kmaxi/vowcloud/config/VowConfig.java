@@ -15,7 +15,7 @@ public class VowConfig {
 
     public final ConfigEntry<Boolean> useLocalHostServer;
 
-    public final ConfigEntry<Boolean> reverbEnabled;
+    public final ConfigEntry<Boolean> physicsEnabled;
 
     public final ConfigEntry<Float> attenuationFactor;
     public final ConfigEntry<Float> reverbGain;
@@ -24,10 +24,8 @@ public class VowConfig {
     public final ConfigEntry<Float> occlusionVariation;
     public final ConfigEntry<Float> defaultBlockReflectivity;
     public final ConfigEntry<Float> defaultBlockOcclusionFactor;
-    public final ConfigEntry<Float> soundDistanceAllowance;
     public final ConfigEntry<Float> airAbsorption;
     public final ConfigEntry<Float> underwaterFilter;
-    public final ConfigEntry<Boolean> evaluateAmbientSounds;
 
     public final ConfigEntry<Integer> environmentEvaluationRayCount;
     public final ConfigEntry<Integer> environmentEvaluationRayBounces;
@@ -37,13 +35,7 @@ public class VowConfig {
     public final ConfigEntry<Boolean> strictOcclusion;
     public final ConfigEntry<Boolean> soundDirectionEvaluation;
     public final ConfigEntry<Boolean> redirectNonOccludedSounds;
-    public final ConfigEntry<Boolean> updateMovingSounds;
-    public final ConfigEntry<Integer> soundUpdateInterval;
 
-    public final ConfigEntry<Boolean> debugLogging;
-    public final ConfigEntry<Boolean> occlusionLogging;
-    public final ConfigEntry<Boolean> environmentLogging;
-    public final ConfigEntry<Boolean> performanceLogging;
     public final ConfigEntry<Boolean> renderSoundBounces;
     public final ConfigEntry<Boolean> renderOcclusion;
 
@@ -51,7 +43,7 @@ public class VowConfig {
     public VowConfig(ConfigBuilder builder) {
         enabled = builder.booleanEntry("enabled", true)
                 .comment("Enable or disable the mod");
-        reverbEnabled = builder.booleanEntry("reverbEnabled", true)
+        physicsEnabled = builder.booleanEntry("reverbEnabled", true)
                 .comment("Enable or disable the reverb and sound physics");
 
         autoProgress = builder.booleanEntry("autoProgress", true)
@@ -99,12 +91,6 @@ public class VowConfig {
                         "Lower values will result in sounds being less muffled through walls",
                         "Higher values mean sounds will be not audible though thicker walls"
                 );
-        soundDistanceAllowance = builder.floatEntry("sound_distance_allowance", 4F, 1F, 6F)
-                .comment(
-                        "Minecraft won't allow sounds to play past a certain distance",
-                        "This parameter is a multiplier for how far away a sound source is allowed to be in order for it to actually play",
-                        "This setting only takes affect in singleplayer worlds and when installed on the server"
-                );
         airAbsorption = builder.floatEntry("air_absorption", 1F, 0F, 5F)
                 .comment(
                         "A value controlling the amount that air absorbs high frequencies with distance",
@@ -118,10 +104,7 @@ public class VowConfig {
                         "0.0 means no filter",
                         "1.0 means fully filtered"
                 );
-        evaluateAmbientSounds = builder.booleanEntry("evaluate_ambient_sounds", false)
-                .comment(
-                        "Whether sounds like cave, nether or underwater ambient sounds should have sound physics"
-                );
+
 
         environmentEvaluationRayCount = builder.integerEntry("environment_evaluation_ray_count", 32, 8, 64)
                 .comment(
@@ -150,23 +133,7 @@ public class VowConfig {
                 .comment("Whether to try calculating where the sound should come from based on reflections");
         redirectNonOccludedSounds = builder.booleanEntry("redirect_non_occluded_sounds", true)
                 .comment("Skip redirecting non-occluded sounds (the ones you can see directly)");
-        updateMovingSounds = builder.booleanEntry("update_moving_sounds", false)
-                .comment("If music discs or other longer sounds should be frequently reevaluated");
-        soundUpdateInterval = builder.integerEntry("sound_update_interval", 5, 1, Integer.MAX_VALUE)
-                .comment(
-                        "The interval in ticks that moving sounds are reevaluated",
-                        "Lower values mean more frequent reevaluation but also more lag",
-                        "This option only takes effect if update_moving_sounds is enabled"
-                );
 
-        debugLogging = builder.booleanEntry("debug_logging", false)
-                .comment("Enables debug logging");
-        occlusionLogging = builder.booleanEntry("occlusion_logging", false)
-                .comment("Provides more information about occlusion in the logs");
-        environmentLogging = builder.booleanEntry("environment_logging", false)
-                .comment("Provides more information about the environment calculation in the logs");
-        performanceLogging = builder.booleanEntry("performance_logging", false)
-                .comment("Provides more information about how long computations take");
         renderSoundBounces = builder.booleanEntry("render_sound_bounces", false)
                 .comment("If enabled, the path of the sound will be rendered in game");
         renderOcclusion = builder.booleanEntry("render_occlusion", false)
