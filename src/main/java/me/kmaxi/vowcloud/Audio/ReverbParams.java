@@ -18,6 +18,9 @@ public class ReverbParams {
     public float roomRolloffFactor;         // min: 0.0F	max: 10.0F
     public static ReverbParams getReverbParams(int id){
         ReverbParams r = new ReverbParams();
+        r.lateReverbGain = 1.26F;
+        r.airAbsorptionGainHF = 0.994F;
+
         switch (id){
             case 0:
                 r.decayTime = 0.15F;
@@ -29,6 +32,7 @@ public class ReverbParams {
                 r.reflectionsGain = 2.5F;
                 r.reflectionsDelay = 0.001F;
                 r.lateReverbDelay = 0.011F;
+                r.airAbsorptionGainHF = 0.004F;
                 r.roomRolloffFactor = 0.56F;
                 break;
             case 1:
@@ -65,13 +69,9 @@ public class ReverbParams {
                 r.reflectionsGain = 0F;
                 r.reflectionsDelay = 0.025F;
                 r.lateReverbDelay = 0.021F;
-
                 r.roomRolloffFactor = 0.45F ;
                 break;
         }
-
-        r.lateReverbGain = 1.26F;
-        r.airAbsorptionGainHF = 0.994F;
 
         return r;
     }
