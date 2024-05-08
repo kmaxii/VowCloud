@@ -32,7 +32,7 @@ public class SoundEffects {
     private int[] reverbs = new int[4];
 
     private static final float PHI = 1.618033988F;
-    private static final float maxRaycastDistance = 30F;
+    private static final float maxRaycastDistance = 256F;
 
     private int directFilter;
 
@@ -221,7 +221,7 @@ public class SoundEffects {
 
             if (rayHit.getType() == HitResult.Type.BLOCK) {
 
-                // Additional bounces
+                // Ray bounces
                 BlockPos lastHitBlock = rayHit.getBlockPos();
                 Vec3 lastHitPos = rayHit.getLocation();
                 Vec3 lastHitNormal = new Vec3(rayHit.getDirection().step());
@@ -275,7 +275,8 @@ public class SoundEffects {
 
                     float reflectionDelay = (float) Math.max(totalRayDistance, 0D) * 0.12F * blockReflectivity;
 
-                    float[] cross = new float[]{1F - Mth.clamp(Math.abs(reflectionDelay - 0F), 0F, 1F),
+                    float[] cross = new float[]{
+                            1F - Mth.clamp(Math.abs(reflectionDelay - 0F), 0F, 1F),
                             1F - Mth.clamp(Math.abs(reflectionDelay - 1F), 0F, 1F),
                             1F - Mth.clamp(Math.abs(reflectionDelay - 2F), 0F, 1F),
                             Mth.clamp(reflectionDelay - 2F, 0F, 1F)
@@ -304,7 +305,8 @@ public class SoundEffects {
 
         float sharedAirspace = audioDirection.getSharedAirspaces() * 64F * rcpTotalRays;
 
-        float[] sharedAirspaceWeights = new float[]{Mth.clamp(sharedAirspace / 20F, 0F, 1F),
+        float[] sharedAirspaceWeights = new float[]{
+                Mth.clamp(sharedAirspace / 20F, 0F, 1F),
                 Mth.clamp(sharedAirspace / 15F, 0F, 1F),
                 Mth.clamp(sharedAirspace / 10F, 0F, 1F),
                 Mth.clamp(sharedAirspace / 10F, 0F, 1F)};
@@ -328,16 +330,15 @@ public class SoundEffects {
             sendGains[3] *= (float) Math.pow(bounceReflectivityRatio[3], 4D);
         }
 
-        //Print out all gains
-        Utils.sendMessage("Gains: " + sendGains[0] + ", " + sendGains[1] + ", " + sendGains[2] + ", " + sendGains[3]);
-
         sendGains[0] = Mth.clamp(sendGains[0], 0F, 1F);
         sendGains[1] = Mth.clamp(sendGains[1], 0F, 1F);
         sendGains[2] = Mth.clamp(sendGains[2] * 1.05F - 0.05F, 0F, 1F);
         sendGains[3] = Mth.clamp(sendGains[3] * 1.05F - 0.05F, 0F, 1F);
 
+        //Apply the general cut-off to all filters
         for (int i = 0; i <4; i++){
             sendGains[i] *= (float) Math.pow(sendCutoffs[i], 0.1D);
+            sendGains[i] = Mth.clamp(sendGains[i] * 5, 0F, 1F);
         }
 
         assert mc.player != null;
