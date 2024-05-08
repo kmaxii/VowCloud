@@ -2,6 +2,7 @@ package me.kmaxi.vowcloud.Audio;
 
 import me.kmaxi.vowcloud.Loggers;
 import me.kmaxi.vowcloud.VowCloud;
+import me.kmaxi.vowcloud.utils.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -119,7 +120,7 @@ public class SoundEffects {
         }
 
         for (int i = 0; i < Math.min(maxAuxSends, 4); i++) {
-            setFilter(i, 3 - i);
+            setReverbFilter(i, 3 - i);
         }
 
         EXTEfx.alFilterf(directFilter, EXTEfx.AL_LOWPASS_GAIN, gain);
@@ -131,10 +132,14 @@ public class SoundEffects {
         logALError("Set environment airAbsorption:");
     }
 
-    private void setFilter(int id, int auxSlot){
+    private void setReverbFilter(int id, int auxSlot){
         EXTEfx.alFilterf(sendFilters[id], EXTEfx.AL_LOWPASS_GAIN, sendGains[id]);
         EXTEfx.alFilterf(sendFilters[id], EXTEfx.AL_LOWPASS_GAINHF, sendCutoffs[id]);
         AL11.alSource3i(sourceID, EXTEfx.AL_AUXILIARY_SEND_FILTER, auxFXSlots[id], auxSlot, sendFilters[0]);
+
+        //print out all info that was set
+        Utils.sendMessage("Set environment sendFilter: " + id + ": " + sendFilters[id] + ", gain: " + sendGains[id] + ", gainHF:" + sendCutoffs[id]);
+
         logALError("Set environment filter0:");
     }
 
@@ -169,7 +174,7 @@ public class SoundEffects {
 
         resetFilters();
         if (isInvalidEnvironment(posX, posY, posZ)) {
-            //We apply the effects with the default values
+            //Apply the effects with the default values because it's not possible to evaluate the environment
             applyEffects();
             return;
         }
@@ -281,7 +286,7 @@ public class SoundEffects {
                         sendGains[y] += cross[y] * energyTowardsPlayer * 12.8F * rcpTotalRays;
                     }
 
-                    // Nowhere to bounce off of, stop bouncing!
+                    // Nowhere to bounce off too, stop bouncing!
                     if (newRayHit.getType() == HitResult.Type.MISS) {
                         break;
                     }
@@ -323,13 +328,16 @@ public class SoundEffects {
             sendGains[3] *= (float) Math.pow(bounceReflectivityRatio[3], 4D);
         }
 
+        //Print out all gains
+        Utils.sendMessage("Gains: " + sendGains[0] + ", " + sendGains[1] + ", " + sendGains[2] + ", " + sendGains[3]);
+
         sendGains[0] = Mth.clamp(sendGains[0], 0F, 1F);
         sendGains[1] = Mth.clamp(sendGains[1], 0F, 1F);
         sendGains[2] = Mth.clamp(sendGains[2] * 1.05F - 0.05F, 0F, 1F);
         sendGains[3] = Mth.clamp(sendGains[3] * 1.05F - 0.05F, 0F, 1F);
 
         for (int i = 0; i <4; i++){
-            sendGains[i] = (float) Math.pow(sendCutoffs[i], 0.1D);
+            sendGains[i] *= (float) Math.pow(sendCutoffs[i], 0.1D);
         }
 
         assert mc.player != null;
@@ -391,8 +399,6 @@ public class SoundEffects {
             if (!blockHit.isFaceSturdy(mc.level, rayHit.getBlockPos(), sideHit)) {
                 blockOcclusion *= VowCloud.CONFIG.nonFullBlockOcclusionFactor.get();
             }
-
-            Loggers.log("{} \t{},{},{}", blockHit.getBlock().getDescriptionId(), rayOrigin.x, rayOrigin.y, rayOrigin.z);
 
             //Accumulate density
             occlusionAccumulation += blockOcclusion;
