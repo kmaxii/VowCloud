@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.block.BarrierBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -217,7 +218,7 @@ public class SoundEffects {
 
             Vec3 rayEnd = new Vec3(soundPos.x + rayDir.x * maxRaycastDistance, soundPos.y + rayDir.y * maxRaycastDistance, soundPos.z + rayDir.z * maxRaycastDistance);
 
-            BlockHitResult rayHit = raycast(soundPos, rayEnd, soundBlockPos);
+            BlockHitResult rayHit = raycast(soundPos, rayEnd, soundBlockPos, 0);
 
             if (rayHit.getType() == HitResult.Type.BLOCK) {
 
@@ -242,7 +243,7 @@ public class SoundEffects {
                     Vec3 newRayStart = lastHitPos;
                     Vec3 newRayEnd = new Vec3(newRayStart.x + newRayDir.x * maxRaycastDistance, newRayStart.y + newRayDir.y * maxRaycastDistance, newRayStart.z + newRayDir.z * maxRaycastDistance);
 
-                    BlockHitResult newRayHit = raycast(newRayStart, newRayEnd, lastHitBlock);
+                    BlockHitResult newRayHit = raycast(newRayStart, newRayEnd, lastHitBlock, 0);
 
                     float blockReflectivity = getBlockReflectivity(lastHitBlock);
                     float energyTowardsPlayer = 0.25F * (blockReflectivity * 0.75F + 0.25F);
@@ -378,7 +379,7 @@ public class SoundEffects {
         Vec3 rayOrigin = soundPos;
         BlockPos lastBlockPos = new BlockPos((int) soundPos.x, (int) soundPos.y, (int) soundPos.z);
         for (int i = 0; i < VowCloud.CONFIG.maxOcclusionRays.get(); i++) {
-            BlockHitResult rayHit = raycast(rayOrigin, playerPos, lastBlockPos);
+            BlockHitResult rayHit = raycast(rayOrigin, playerPos, lastBlockPos, 0);
 
             lastBlockPos = rayHit.getBlockPos();
 
@@ -436,7 +437,7 @@ public class SoundEffects {
      */
     @Nullable
     private Vec3 getSharedAirspace(Vec3 soundPosition, Vec3 listenerPosition) {
-        BlockHitResult finalRayHit = raycast(soundPosition, listenerPosition, null);
+        BlockHitResult finalRayHit = raycast(soundPosition, listenerPosition, null, 0);
         if (finalRayHit.getType() == HitResult.Type.MISS) {
             RaycastRenderer.addSoundBounceRay(soundPosition, listenerPosition.add(0D, -0.1D, 0D), ChatFormatting.WHITE.getColor());
             return soundPosition.subtract(listenerPosition);
@@ -445,15 +446,30 @@ public class SoundEffects {
     }
 
 
-    public BlockHitResult raycast(Vec3 start, Vec3 end, @Nullable BlockPos ignore) {
-
+    public BlockHitResult raycast(Vec3 start, Vec3 end, @Nullable BlockPos ignore, int recursionCount) {
+        if (recursionCount > 4) {
+            return BlockHitResult.miss(end, Direction.UP, new BlockPos((int) end.x, (int) end.y, (int) end.z));
+        }
         if (mc.level != null) {
-            return mc.level.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.SOURCE_ONLY, mc.player));
+            BlockHitResult result = mc.level.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.SOURCE_ONLY, mc.player));
+
+            // Check if the hit block is a barrier block, if yes, continue the raycast beyond it
+            if (result.getType() == BlockHitResult.Type.BLOCK && mc.level.getBlockState(result.getBlockPos()).getBlock() instanceof BarrierBlock) {
+
+                var dir = result.getDirection();
+                Vec3 direction = new Vec3(dir.getStepX(), dir.getStepY(), dir.getStepZ());
+
+                Vec3 nextStart = result.getLocation().add(direction); // Move the start point slightly beyond the barrier block
+                return raycast(nextStart, end, result.getBlockPos(), recursionCount + 1); // Recursively continue the raycast from the new start point
+            }
+
+            return result;
         }
 
         Vec3 dir = end.subtract(start);
         return BlockHitResult.miss(end, Direction.getNearest(dir.x, dir.y, dir.z), new BlockPos((int) end.x, (int) end.y, (int) end.z));
     }
+
 
     private static void setSoundPos(int sourceID, Vec3 pos) {
         AL11.alSource3f(sourceID, AL11.AL_POSITION, (float) pos.x, (float) pos.y, (float) pos.z);
