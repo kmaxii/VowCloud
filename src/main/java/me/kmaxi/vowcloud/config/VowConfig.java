@@ -67,7 +67,7 @@ public class VowConfig {
                         "1.0 is the physically correct value"
                 );
         reverbGain = builder
-                .floatEntry("reverb_gain", 1F, 0.1F, 2F)
+                .floatEntry("reverb_gain", 2F, 0.1F, 2F)
                 .comment("The volume of simulated reverberations");
         reverbBrightness = builder.floatEntry("reverb_brightness", 1F, 0.1F, 2F)
                 .comment(

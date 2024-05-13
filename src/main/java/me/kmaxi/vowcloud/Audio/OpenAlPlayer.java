@@ -3,7 +3,8 @@ package me.kmaxi.vowcloud.Audio;
 import me.kmaxi.vowcloud.Loggers;
 import me.kmaxi.vowcloud.npc.CurrentSpeaker;
 import net.minecraft.world.phys.Vec3;
-import org.lwjgl.openal.*;
+import org.lwjgl.openal.AL10;
+import org.lwjgl.openal.AL11;
 
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -36,6 +37,7 @@ public class OpenAlPlayer {
         executorService = Executors.newSingleThreadExecutor();
         createOpelAL();
     }
+
     private static SoundEffects soundEffects;
 
 
@@ -71,13 +73,13 @@ public class OpenAlPlayer {
     }
 
 
-    public void onTick(){
+    public void onTick() {
         executorService.execute(() -> {
             if (isStopped()) {
                 return;
             }
 
-            if(customPlayPos != null){
+            if (customPlayPos != null) {
                 setPosition(Optional.of(customPlayPos));
                 return;
             }
@@ -87,11 +89,11 @@ public class OpenAlPlayer {
         });
     }
 
-    public void updateSpeaker(String speakerName, Vec3 pos){
+    public void updateSpeaker(String speakerName, Vec3 pos) {
         executorService.execute(() -> {
             if (pos.x == 0 && pos.y == 0 && pos.z == 0) {
                 customPlayPos = null;
-            } else{
+            } else {
                 customPlayPos = pos;
             }
             currentSpeaker.setNpc(speakerName);
@@ -99,27 +101,27 @@ public class OpenAlPlayer {
         });
     }
 
-    private void startPlayingIfStoppedSync(){
-          if (isStopped()) {
+    private void startPlayingIfStoppedSync() {
+        if (isStopped()) {
             AL11.alSourcePlay(sourceID);
         }
     }
 
 
-    private boolean isStopped(){
+    private boolean isStopped() {
         int state = AL11.alGetSourcei(sourceID, AL11.AL_SOURCE_STATE);
         return state == AL11.AL_INITIAL || state == AL11.AL_STOPPED || state <= 0;
     }
 
-    public void stopAudio(){
+    public void stopAudio() {
         executorService.execute(this::stopPlayingSync);
     }
 
-    private void stopPlayingSync(){
+    private void stopPlayingSync() {
         AL11.alSourceStop(sourceID);
     }
 
-    private void setVolumeSync(float volume){
+    private void setVolumeSync(float volume) {
         AL11.alSourcef(sourceID, AL11.AL_MAX_GAIN, 6F);
         AL11.alSourcef(sourceID, AL11.AL_GAIN, volume);
         AL11.alListenerf(AL11.AL_GAIN, 1F);
@@ -153,8 +155,8 @@ public class OpenAlPlayer {
 
             AL11.alSource3f(sourceID, AL11.AL_POSITION, (float) pos.x, (float) pos.y, (float) pos.z);
 
-           soundEffects.evaluateEnvironment(pos.x, pos.y, pos.z);
-        },  () -> {
+            soundEffects.evaluateEnvironment(pos.x, pos.y, pos.z);
+        }, () -> {
 
             AL11.alSourcei(sourceID, AL11.AL_SOURCE_RELATIVE, AL11.AL_TRUE);
 

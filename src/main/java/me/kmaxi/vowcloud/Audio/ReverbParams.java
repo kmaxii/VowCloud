@@ -26,7 +26,7 @@ public class ReverbParams {
                 r.decayTime = 0.15F;
                 r.density = 0F;
                 r.diffusion = 1F;
-                r.gain = 0.2F * globalReverbMultiplier() * 0.85F;
+                r.gain = 0.2F * globalReverbMultiplier();
                 r.gainHF = 0.99F;
                 r.decayHFRatio = 0.6F * VowCloud.CONFIG.reverbBrightness.get();
                 r.reflectionsGain = 2.5F;
@@ -39,7 +39,7 @@ public class ReverbParams {
                 r.decayTime = 0.55F;
                 r.density = 0F;
                 r.diffusion = 1F;
-                r.gain = 0.3f * globalReverbMultiplier() * 0.85F;
+                r.gain = 0.3f * globalReverbMultiplier();
                 r.gainHF = 0.99F;
                 r.decayHFRatio = 0.7F * VowCloud.CONFIG.reverbBrightness.get();
                 r.reflectionsGain = 0.2F;
@@ -51,7 +51,7 @@ public class ReverbParams {
                 r.decayTime = 1.68F;
                 r.density = 0.1F;
                 r.diffusion = 1F;
-                r.gain = 0.5F * globalReverbMultiplier() * 0.85F;
+                r.gain = 0.5F * globalReverbMultiplier();
                 r.gainHF = 0.99F;
                 r.decayHFRatio = 0.7F * VowCloud.CONFIG.reverbBrightness.get();
                 r.reflectionsGain = 0.F;
@@ -63,19 +63,19 @@ public class ReverbParams {
                 r.decayTime = 4.142F;
                 r.density = 0.5F;
                 r.diffusion = 1F;
-                r.gain = 0.4f * globalReverbMultiplier() * 0.85F;
+                r.gain = 0.4f * globalReverbMultiplier();
                 r.gainHF = 0.89F;
                 r.decayHFRatio = 0.7F * VowCloud.CONFIG.reverbBrightness.get();
                 r.reflectionsGain = 0F;
                 r.reflectionsDelay = 0.025F;
                 r.lateReverbDelay = 0.021F;
-                r.roomRolloffFactor = 0.45F ;
+                r.roomRolloffFactor = 0.45F;
                 break;
         }
 
         return r;
     }
         private static float globalReverbMultiplier() {
-        return 0.7F * VowCloud.CONFIG.reverbGain.get();
+        return 0.9F * VowCloud.CONFIG.reverbGain.get();
     }
 }

@@ -12,10 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(SoundEngine.class)
 public class SoundEngineStartedMixin {
 
-    @Inject(
-            at = @At(value = "RETURN"),
-            method = "loadLibrary")
-
+    @Inject(method = "loadLibrary", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/audio/Listener;reset()V"))
     private void onSoundEngineStarted(CallbackInfo ci) {
         VowCloud.getInstance().audioPlayer = new AudioPlayer();
 

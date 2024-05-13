@@ -139,7 +139,7 @@ public class SoundEffects {
         AL11.alSource3i(sourceID, EXTEfx.AL_AUXILIARY_SEND_FILTER, auxFXSlots[id], auxSlot, sendFilters[0]);
 
         //print out all info that was set
-        Utils.sendMessage("Set environment sendFilter: " + id + ": " + sendFilters[id] + ", gain: " + sendGains[id] + ", gainHF:" + sendCutoffs[id]);
+   //     Utils.sendMessage("Set environment sendFilter: " + id + ": " + sendFilters[id] + ", gain: " + sendGains[id] + ", gainHF:" + sendCutoffs[id]);
 
         logALError("Set environment filter0:");
     }
@@ -339,7 +339,6 @@ public class SoundEffects {
         //Apply the general cut-off to all filters
         for (int i = 0; i <4; i++){
             sendGains[i] *= (float) Math.pow(sendCutoffs[i], 0.1D);
-            sendGains[i] = Mth.clamp(sendGains[i] * 5, 0F, 1F);
         }
 
         assert mc.player != null;
