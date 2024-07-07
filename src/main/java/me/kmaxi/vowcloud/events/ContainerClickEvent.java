@@ -29,8 +29,6 @@ public class ContainerClickEvent {
         characterName = characterName.replace("]", "").trim();
         characterName = characterName.equals("This Character") ? Minecraft.getInstance().player.getDisplayName().getString() : characterName;
 
-        Utils.sendMessage("Character name " + characterName);
-
         VowCloud.getInstance().config.setLastPlayedCharacterName(characterName);
     }
 
