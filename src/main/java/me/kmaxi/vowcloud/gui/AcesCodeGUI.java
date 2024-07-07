@@ -18,7 +18,7 @@ import java.io.IOException;
 
 public class AcesCodeGUI extends LightweightGuiDescription {
 
-    private final ResourceLocation image = new ResourceLocation(VowCloud.MODID, "icon.png");
+    private final ResourceLocation image =  ResourceLocation.fromNamespaceAndPath(VowCloud.MODID, "icon.png");
 
     private WTextField wTextField;
 
