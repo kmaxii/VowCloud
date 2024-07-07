@@ -1,6 +1,7 @@
 package me.kmaxi.vowcloud.gui;
 
 
+import io.github.cottonmc.cotton.gui.client.BackgroundPainter;
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.*;
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
@@ -28,8 +29,9 @@ public class AcesCodeGUI extends LightweightGuiDescription {
 
     public AcesCodeGUI() {
         WGridPanel root = new WGridPanel();
+
         setRootPanel(root);
-        root.setSize(300, 200);
+        root.setSize(450, 230);
 
         //    AddLogo(root);
         AddStartText(root);
@@ -47,11 +49,11 @@ public class AcesCodeGUI extends LightweightGuiDescription {
     }
 
     private void AddStartText(WGridPanel root) {
-        root.add(new WLabel(Component.literal("§5VOICES OF WYNN CLOUD")).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 0);
-        root.add(new WLabel(Component.literal("§fThe Cloud version of Voices of Wynn is currently in closed beta.")).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 1);
-        root.add(new WLabel(Component.literal("§fIf you're a supporter or contributor, join our Discord and use /token in any channel.")).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 2);
-        root.add(new WLabel(Component.literal("§fYou'll get a unique token to enter in the field below.")).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 3);
-        root.add(new WLabel(Component.literal("§c" + errorText)).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 4);
+        root.add(new WLabel(Component.literal("§5VOICES OF WYNN CLOUD")).setHorizontalAlignment(HorizontalAlignment.CENTER), 12, 1);
+        root.add(new WLabel(Component.literal("§fThe Cloud version of Voices of Wynn is currently in closed beta.")).setHorizontalAlignment(HorizontalAlignment.CENTER), 12, 2);
+        root.add(new WLabel(Component.literal("§fIf you're a supporter or contributor, join our Discord and use /token in any channel.")).setHorizontalAlignment(HorizontalAlignment.CENTER), 12, 3);
+        root.add(new WLabel(Component.literal("§fYou'll get a unique token to enter in the field below.")).setHorizontalAlignment(HorizontalAlignment.CENTER), 12, 4);
+        root.add(new WLabel(Component.literal("§c" + errorText)).setHorizontalAlignment(HorizontalAlignment.CENTER), 12, 5);
 
     /*    root.add(new WLabel(Component.literal("encountered while playing Wynncraft to improve")).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 3);
         root.add(new WLabel(Component.literal("Voices of Wynn?")).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 4);
@@ -62,12 +64,12 @@ public class AcesCodeGUI extends LightweightGuiDescription {
 
 
     private void AddNormalVersionInfo(WGridPanel root) {
-        root.add(new WLabel(Component.literal("§fIf you're not a supporter you can still use the public classic version:")).setHorizontalAlignment(HorizontalAlignment.CENTER), 8, 9);
+        root.add(new WLabel(Component.literal("§fIf you're not a supporter you can still use the public classic version:")).setHorizontalAlignment(HorizontalAlignment.CENTER), 12, 10);
         WButton openDownloadLink = new WButton(Component.literal("Download Classic Version"));
         String url = "https://www.curseforge.com/minecraft/mc-mods/voices-of-wynn/files/all?page=1&pageSize=20";
         openDownloadLink.setOnClick(() -> OpenUrl(url));
         openDownloadLink.setAlignment(HorizontalAlignment.CENTER);
-        root.add(openDownloadLink, 4, 10, 9, 1);
+        root.add(openDownloadLink, 8, 11, 9, 1);
 
 
 
@@ -104,7 +106,7 @@ public class AcesCodeGUI extends LightweightGuiDescription {
 
     private void AddTextField(WGridPanel root) {
         wTextField = new WTextField();
-        root.add(wTextField, 1, 5, 15, 20);
+        root.add(wTextField, 5, 6, 15, 20);
     }
 
 
@@ -113,13 +115,13 @@ public class AcesCodeGUI extends LightweightGuiDescription {
         confirmButton.setOnClick(this::onConfirmClick);
         confirmButton.setAlignment(HorizontalAlignment.CENTER);
         // confirmButton.setIcon(new ItemIcon(new ItemStack(Items.DIAMOND)));
-        root.add(confirmButton, 6, 7, 5, 1);
+        root.add(confirmButton, 10, 8, 5, 1);
 
         WButton discordButton = new WButton(Component.literal("§9Discord"));
         discordButton.setOnClick(() -> OpenUrl("https://discord.com/servers/voices-of-wynn-814401551292563477"));
         discordButton.setAlignment(HorizontalAlignment.CENTER);
 
-        root.add(discordButton, 1, 7, 4, 1);
+        root.add(discordButton, 5, 8, 4, 1);
 
 
 
@@ -127,7 +129,7 @@ public class AcesCodeGUI extends LightweightGuiDescription {
         closeButton.setOnClick(this::onCloseClick);
         closeButton.setAlignment(HorizontalAlignment.CENTER);
  //       closeButton.setIcon(new ItemIcon(new ItemStack(Items.BARRIER)));
-        root.add(closeButton, 12, 7, 4, 1);
+        root.add(closeButton, 16, 8, 4, 1);
 
     }
 
