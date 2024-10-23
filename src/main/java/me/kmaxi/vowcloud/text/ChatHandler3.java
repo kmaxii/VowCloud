@@ -5,15 +5,18 @@
  */
 package me.kmaxi.vowcloud.text;
 
-import me.kmaxi.vowcloud.Loggers;
 import me.kmaxi.vowcloud.events.ReceiveChatEvent;
+import me.kmaxi.vowcloud.utils.LineData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundRemoveMobEffectPacket;
 import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
 import net.minecraft.world.effect.MobEffects;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public final class ChatHandler3 {
@@ -38,7 +41,7 @@ public final class ChatHandler3 {
 
     private boolean updateWrongOrder = false;
 
-    private void updateWrongOrderPackets(){
+    private void updateWrongOrderPackets() {
 
         updateWrongOrder = false;
 
@@ -90,7 +93,7 @@ public final class ChatHandler3 {
 
     public void onStatusEffectRemove(ClientboundRemoveMobEffectPacket packet) {
 
-        if (packet.getEffect() == MobEffects.MOVEMENT_SLOWDOWN) {
+        if (packet.effect() == MobEffects.MOVEMENT_SLOWDOWN) {
             lastSlowdownApplied = 0;
         }
     }
@@ -113,6 +116,13 @@ public final class ChatHandler3 {
         if (styledText.contains("\n")
                 || (styledText.isEmpty() && (currentTicks <= chatScreenTicks + CHAT_SCREEN_TICK_DELAY))) {
             // This is a "chat screen"
+
+            if (LineData.NPC_DIALOGUE_PATTERN.matcher(message.getString().replace("\n", "").trim()).find()) {
+                // This is a NPC dialogue, but it is not a foreground one
+                postNpcDialogue(List.of(message), NpcDialogueType.NORMAL);
+                return;
+            }
+
             List<Component> lines = ComponentUtils.splitComponentInLines(message);
             if (currentTicks < chatScreenTicks + CHAT_SCREEN_TICK_DELAY) {
                 // We are collecting lines, so add to the current collection
@@ -183,6 +193,10 @@ public final class ChatHandler3 {
     }
 
     private void processNewLines(LinkedList<Component> newLines) {
+
+        if (newLines == null || newLines.isEmpty())
+            return;
+
         // We have new lines added to the bottom of the chat screen. They are either a dialogue,
         // or new background chat messages. Separate them in two parts
         LinkedList<Component> newChatLines = new LinkedList<>();
@@ -196,11 +210,11 @@ public final class ChatHandler3 {
             // This is an NPC dialogue screen.
             // First remove the "Press SHIFT/Select an option to continue" trailer.
             newLines.removeFirst();
-            if (newLines.getFirst().getString().isEmpty()) {
+            if (!newLines.isEmpty() && newLines.getFirst() != null && newLines.getFirst().getString().isEmpty()) {
                 // After this we assume a blank line
                 newLines.removeFirst();
             } else {
-                Loggers.error("Malformed dialog [#1]: " + newLines.getFirst());;
+                System.out.println("Wynnvp: Malformed dialog [#1]: ");
             }
 
             boolean dialogDone = false;
@@ -274,7 +288,6 @@ public final class ChatHandler3 {
     }
 
 
-
     private void handleFakeChatLine(Component message) {
         // This is a normal, single line chat, sent in the background
         StyledText styledText = StyledText.fromComponent(message);
@@ -301,8 +314,18 @@ public final class ChatHandler3 {
         // Normally § codes are stripped from the log; need this to be able to debug chat formatting
         RecipientType recipientType = getRecipientType(styledText);
 
-        if (recipientType == RecipientType.NPC) {
-            postNpcDialogue(List.of(message), NpcDialogueType.CONFIRMATIONLESS);
+
+        switch (recipientType) {
+            case INFO:
+                if (LineData.NPC_DIALOGUE_PATTERN.matcher(message.getString()).find()
+                        || !message.getString().contains("[")) {
+                    // This is a NPC dialogue, but it is not a foreground one
+                    postNpcDialogue(List.of(message), NpcDialogueType.NORMAL);
+                }
+                break;
+            case NPC:
+                postNpcDialogue(List.of(message), NpcDialogueType.NORMAL);
+                break;
         }
     }
 
@@ -323,7 +346,6 @@ public final class ChatHandler3 {
     }
 
 
-
     private RecipientType getRecipientType(StyledText codedMessage) {
         // Check if message match a recipient category
         for (RecipientType recipientType : RecipientType.values()) {
@@ -341,8 +363,8 @@ public final class ChatHandler3 {
         return Minecraft.getInstance().level.getLevelData().getGameTime();
     }
 
-    private void onNpcDialogue(List<Component> dialogue){
-        for (var comp : dialogue){
+    private void onNpcDialogue(List<Component> dialogue) {
+        for (var comp : dialogue) {
             ReceiveChatEvent.receivedChat(comp.getString());
         }
     }
